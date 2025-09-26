@@ -533,22 +533,27 @@ class DarkBeastChess {
     updateTurnIndicator() {
         const turnIndicator = document.getElementById('turnIndicator');
         const turnTitle = document.getElementById('turnTitle');
+        const boardElement = document.getElementById('gameBoard');
         
         // 移除所有回合指示类
         turnIndicator.classList.remove('red-turn', 'blue-turn');
+        boardElement.classList.remove('turn-red', 'turn-blue');
         
         // 只在游戏进行中显示回合指示
         if (this.phase === 'PLAYING' && this.currentPlayer) {
             // 添加当前玩家的回合指示类
             turnIndicator.classList.add(`${this.currentPlayer}-turn`);
+            boardElement.classList.add(`turn-${this.currentPlayer}`);
             
             // 更新标题文字
             const playerText = this.currentPlayer === 'red' ? '红方回合' : '蓝方回合';
             turnTitle.textContent = playerText;
         } else if (this.phase === 'SETUP') {
             turnTitle.textContent = '点击开始游戏';
+            boardElement.classList.remove('turn-red', 'turn-blue');
         } else if (this.phase === 'GAME_OVER') {
             turnTitle.textContent = '游戏结束';
+            boardElement.classList.remove('turn-red', 'turn-blue');
         }
     }
     

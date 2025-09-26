@@ -63,6 +63,41 @@
                 <div id="reset-btn-desc" class="sr-only">重置当前游戏到初始状态</div>
             </section>
 
+            <section class="online-controls" aria-labelledby="online-controls-heading">
+                <h2 id="online-controls-heading">在线对战</h2>
+                <p class="online-tip" id="onlineStatus" role="status" aria-live="polite">未连接服务器</p>
+                <div class="online-form">
+                    <label class="sr-only" for="onlineNickname">昵称</label>
+                    <input type="text" id="onlineNickname" maxlength="16" placeholder="输入昵称" aria-label="在线昵称">
+                    <button class="btn btn-secondary" id="onlineConnectBtn">连接服务器</button>
+                </div>
+
+                <div class="online-lobby" id="onlineLobby" hidden>
+                    <div class="online-form">
+                        <label class="sr-only" for="onlineRoomName">房间昵称</label>
+                        <input type="text" id="onlineRoomName" maxlength="32" placeholder="新房间昵称" aria-label="房间昵称">
+                        <button class="btn btn-primary" id="createRoomBtn">创建房间</button>
+                    </div>
+                    <div class="online-form">
+                        <label class="sr-only" for="onlineRoomCode">房间号</label>
+                        <input type="text" id="onlineRoomCode" maxlength="36" placeholder="输入房间号加入" aria-label="房间号">
+                        <button class="btn btn-secondary" id="joinRoomBtn">加入房间</button>
+                    </div>
+                    <div class="online-room-list" aria-live="polite" aria-label="可加入房间列表">
+                        <ul id="roomList"></ul>
+                    </div>
+                </div>
+
+                <div class="online-room" id="onlineRoom" hidden>
+                    <div class="online-room-info" id="onlineRoomInfo"></div>
+                    <div class="online-room-actions">
+                        <button class="btn btn-primary" id="readyToggleBtn">准备</button>
+                        <button class="btn btn-secondary" id="rematchBtn">再来一局</button>
+                        <button class="btn btn-secondary" id="leaveRoomBtn">离开房间</button>
+                    </div>
+                </div>
+            </section>
+
             <!-- 游戏规则移动到左侧底部 -->
             <section class="rules-section" aria-labelledby="rules-section-heading-left">
                 <details class="game-rules" open>
@@ -172,5 +207,6 @@
     <div class="focus-indicator" id="focusIndicator" aria-hidden="true"></div>
 
     <script src="game.js"></script>
+    <script type="module" src="scripts/online/bootstrap.js"></script>
 </body>
 </html>

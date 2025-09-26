@@ -402,6 +402,87 @@ body {
     margin: 0;
 }
 
+.online-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border: 1px dashed var(--border-primary);
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.online-controls h2 {
+    font-size: var(--font-size-title-medium);
+    margin-bottom: var(--space-xs);
+}
+
+.online-tip {
+    font-size: var(--font-size-body-small);
+    color: var(--text-secondary);
+}
+
+.online-form {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.online-form input {
+    flex: 1;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-primary);
+    background: var(--game-bg-tertiary);
+    color: var(--text-primary);
+}
+
+.online-room-list {
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin-top: var(--space-sm);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.online-room-list ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.online-room-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+}
+
+.online-room-list li:hover {
+    border-color: var(--accent-gold);
+}
+
+.online-room-info {
+    font-size: var(--font-size-body-small);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.online-room-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
 /* Material Design 3 Button System */
 .btn {
     position: relative;
