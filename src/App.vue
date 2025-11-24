@@ -30,6 +30,20 @@ const {
   leaveRoom
 } = useGameLogic();
 
+const isMyTurn = computed(() => {
+  if (!currentPlayer.value) return false;
+  if (!myColor.value) return false;
+  return currentPlayer.value === myColor.value;
+});
+
+const turnText = computed(() => {
+  if (!currentPlayer.value) return '点击开始游戏';
+  if (myColor.value) {
+    return currentPlayer.value === myColor.value ? '等待您的操作' : '等待对方操作';
+  }
+  return `等待${currentPlayer.value === 'red' ? '红方' : '蓝方'}操作`;
+});
+
 const phaseText = computed(() => {
   switch (status.value) {
     case 'SETUP': return '游戏准备中';
@@ -97,18 +111,16 @@ const victoryMessage = computed(() => {
         <div class="current-player"
              id="currentPlayerInfo"
              role="status"
-             aria-live="polite"
-             aria-label="当前玩家信息">
-          <div class="player-indicator" :class="currentPlayer" aria-hidden="true"></div>
-          <span id="playerText">
-            <template v-if="currentPlayer">
-              等待<span :class="['player-name', currentPlayer]">{{ currentPlayer === 'red' ? '红方' : '蓝方' }}</span>操作
-            </template>
-            <template v-else>
-              点击开始游戏
-            </template>
-          </span>
-        </div>
+         aria-live="polite"
+         aria-label="当前玩家信息">
+      <div class="player-indicator" :class="currentPlayer" aria-hidden="true"></div>
+      <span
+        id="playerText"
+        class="turn-text"
+        :class="[{ 'is-your-turn': isMyTurn, 'is-opponent-turn': currentPlayer && !isMyTurn }]">
+        {{ turnText }}
+      </span>
+    </div>
 
         <div v-if="isOnline && myColor" class="my-color-info" :class="myColor">
             您是：{{ myColor === 'red' ? '红方' : '蓝方' }}
