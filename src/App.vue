@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useGameLogic } from './composables/useGameLogic';
 import BoardCell from './components/BoardCell.vue';
+import Lobby from './components/Lobby.vue';
 
 const {
   board,
@@ -14,7 +15,15 @@ const {
   bluePiecesCount,
   initGame,
   handleCellClick,
-  resetGame
+  resetGame,
+  gameStarted,
+  startLocalGame,
+  isOnline,
+  isConnecting,
+  connectionError,
+  createRoom,
+  joinRoom,
+  game
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -97,59 +106,53 @@ const victoryMessage = computed(() => {
         <button class="btn btn-primary"
                 id="startBtn"
                 @click="initGame"
-                :disabled="status !== 'SETUP'"
-                aria-describedby="start-btn-desc">
-          开始游戏
+                :disabled="status !== 'SETUP'">
+          {{ status === 'SETUP' ? '开始游戏' : '重新开始' }}
         </button>
-        <div id="start-btn-desc" class="sr-only">开始新的暗兽棋游戏</div>
-
-        <button class="btn btn-secondary"
-                id="resetBtn"
-                @click="resetGame"
-                aria-describedby="reset-btn-desc">
-          重新开始
-        </button>
-        <div id="reset-btn-desc" class="sr-only">重置当前游戏到初始状态</div>
       </section>
 
-      <section class="rules-section" aria-labelledby="rules-section-heading-left">
-        <details class="game-rules" open>
-          <summary>
-            <h2 id="rules-section-heading-left">游戏规则</h2>
-          </summary>
-          <ul role="list">
-            <li>翻开第一枚棋子决定颜色</li>
-            <li>每回合可选择翻棋或走棋</li>
-            <li>食物链规则：象>狮>虎>豹>狼>狗>猫>鼠</li>
-            <li>特殊：鼠可以吃象</li>
-            <li>同类相遇同归于尽</li>
-          </ul>
-        </details>
-      </section>
-    </aside>
-
-    <!-- 中间棋盘区域 -->
-    <main class="game-main" id="main-game" role="main" aria-labelledby="board-heading">
-      <h2 id="board-heading" class="sr-only">游戏棋盘</h2>
-
-      <div class="game-board"
-           id="gameBoard"
-           role="grid"
-           aria-label="4×4游戏棋盘"
-           aria-describedby="board-instructions"
-           :class="boardClass">
-
-        <BoardCell
-          v-for="cell in board"
-          :key="cell.id"
-          :piece="cell.piece"
-          :is-selected="selectedCellId === cell.id"
-          @click="handleCellClick(cell.id)"
-        />
-
+      <!-- 联机大厅 -->
+      <div v-if="!isOnline && !gameStarted" class="lobby-overlay">
+         <Lobby
+           :connecting="isConnecting"
+           :error="connectionError"
+           @create-room="createRoom"
+           @join-room="joinRoom"
+         />
+         <div class="local-play-option">
+             <button class="text-btn" @click="startLocalGame">单机试玩</button>
+         </div>
       </div>
-      <div id="board-instructions" class="sr-only">
-        使用鼠标点击或键盘导航来选择和移动棋子。
+
+      <div class="game-board-container" :class="{ 'blur-bg': !isOnline && !gameStarted }">
+        <div class="board-grid" role="grid" aria-label="游戏棋盘">
+          <div
+            v-for="(row, rowIndex) in game.board"
+            :key="rowIndex"
+            class="board-row"
+            role="row"
+          >
+            <BoardCell
+              v-for="(piece, colIndex) in row"
+              :key="`${rowIndex}-${colIndex}`"
+              :piece="piece"
+              :row="rowIndex"
+              :col="colIndex"
+              :is-selected="game.selectedPiece?.row === rowIndex && game.selectedPiece?.col === colIndex"
+              :is-valid-move="false"
+              @click="handleCellClick(rowIndex, colIndex)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部消息区域 -->
+      <div class="game-messages" role="log" aria-live="polite">
+        <div class="message-list">
+          <div v-for="(msg, index) in game.messages.slice(-3)" :key="index" :class="['message-item', msg.type]">
+            <span class="bullet">•</span> {{ msg.text }}
+          </div>
+        </div>
       </div>
     </main>
 
@@ -159,59 +162,18 @@ const victoryMessage = computed(() => {
 
       <!-- 游戏统计 -->
       <section class="game-stats-section" aria-labelledby="stats-section-heading">
-        <h2 id="stats-section-heading">游戏统计</h2>
-        <div class="game-stats" aria-labelledby="stats-heading">
-          <h3 id="stats-heading" class="sr-only">统计数据</h3>
+        <h2 id="stats-section-heading" class="section-title">游戏统计</h2>
+        <div class="stats-grid">
           <div class="stat-item">
             <span class="stat-label">红方棋子:</span>
-            <span class="stat-value" id="redPieces" aria-label="红方剩余棋子数量">{{ redPiecesCount }}</span>
+            <span class="stat-value red">{{ redPiecesCount }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">蓝方棋子:</span>
-            <span class="stat-value" id="bluePieces" aria-label="蓝方剩余棋子数量">{{ bluePiecesCount }}</span>
+            <span class="stat-value blue">{{ bluePiecesCount }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">回合数:</span>
-            <span class="stat-value" id="turnCount" aria-label="当前回合数">{{ Math.floor((turn - 1) / 2) + 1 }}</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 游戏消息 -->
-      <section class="game-messages"
-               id="gameMessages"
-               role="log"
-               aria-live="polite"
-               aria-labelledby="messages-heading"
-               aria-describedby="messages-desc">
-        <h3 id="messages-heading" class="sr-only">游戏消息</h3>
-        <div id="messages-desc" class="sr-only">显示游戏进程和操作反馈的消息区域</div>
-        <div v-for="(msg, index) in messages"
-             :key="index"
-             class="message-item"
-             :class="msg.type"
-             role="listitem">
-          {{ msg.text }}
-        </div>
-      </section>
-    </aside>
-
-    <!-- 胜利对话框 -->
-    <div class="modal"
-         id="victoryModal"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="victory-title"
-         aria-describedby="victory-message"
-         :class="{ show: showVictoryModal }">
-      <div class="modal-content">
-        <h2 id="victory-title">游戏结束</h2>
-        <p id="victory-message">{{ victoryMessage }}</p>
-        <div class="modal-buttons" role="group" aria-label="游戏结束选项">
-          <button class="btn btn-primary"
-                  @click="resetGame"
-                  aria-label="开始新游戏">
-            再来一局
           </button>
           <!-- Close button just hides modal visually but state is still game over -->
           <!-- We can implement a close method if needed, but reset is better -->
