@@ -98,7 +98,9 @@ const victoryMessage = computed(() => {
           {{ status === 'SETUP' ? '开始游戏' : '重新开始' }}
         </button>
       </section>
+    </aside>
 
+    <main class="game-main" role="main" aria-label="游戏主区域">
       <!-- 联机大厅 -->
       <div v-if="!isOnline && !gameStarted" class="lobby-overlay">
          <Lobby

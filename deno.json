@@ -4,11 +4,12 @@
     "dev": "deno run --watch --allow-net --allow-read --allow-env --unstable-kv server/main.ts"
   },
   "imports": {
-    "hono": "npm:hono@^3.11.7",
-    "hono/deno": "npm:hono@^3.11.7/deno",
+    "hono": "https://deno.land/x/hono/mod.ts",
+    "hono/deno": "https://deno.land/x/hono/adapter/deno/mod.ts",
     "std/": "https://deno.land/std@0.208.0/"
   },
   "compilerOptions": {
     "lib": ["deno.window", "deno.ns", "dom"]
-  }
+  },
+  "nodeModulesDir": "auto"
 }
