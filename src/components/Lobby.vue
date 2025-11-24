@@ -82,11 +82,13 @@ const formatTime = (timestamp: number) => {
   background: rgba(22, 27, 34, 0.95);
   padding: 3rem;
   border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1); */
   text-align: center;
   max-width: 1100px;
-  width: 95%;
-  min-height: 600px;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 2 * var(--container-padding));
+  min-height: calc(100vh - 2 * var(--container-padding));
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
@@ -225,6 +227,7 @@ const formatTime = (timestamp: number) => {
 
 .room-list-container {
   flex: 1;
+  height: 100%;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
