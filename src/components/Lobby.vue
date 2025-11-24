@@ -13,21 +13,6 @@
         </button>
       </div>
 
-      <div class="action-group join-group">
-        <h3>加入游戏</h3>
-        <p class="action-desc">输入房间号加入现有对局</p>
-          <input
-            v-model="roomIdInput"
-            type="text"
-            placeholder="输入房间号"
-            class="room-input"
-            @keyup.enter="joinRoom"
-          />
-          <button class="action-btn join-btn" @click="joinRoom" :disabled="!roomIdInput || connecting">
-            加入
-          </button>
-      </div>
-
       <div v-if="error" class="error-message">
         {{ error }}
       </div>
@@ -74,8 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 defineProps<{
   connecting: boolean;
   error?: string;
@@ -87,14 +70,6 @@ const emit = defineEmits<{
   (e: 'join-room', roomId: string): void;
   (e: 'refresh-rooms'): void;
 }>();
-
-const roomIdInput = ref('');
-
-const joinRoom = () => {
-  if (roomIdInput.value) {
-    emit('join-room', roomIdInput.value.toUpperCase());
-  }
-};
 
 const formatTime = (timestamp: number) => {
   const date = new Date(timestamp);
