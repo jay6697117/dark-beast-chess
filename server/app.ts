@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/middleware.ts';
 
 import { RoomManager } from './room.ts';
+import type { PlayerColor } from '../src/game/core/types.ts';
 
 declare const Deno: any;
 
@@ -257,11 +258,15 @@ export function createApp() {
 
     // Case 3: 已开局，提前退出判负
     const winnerSession = remainingSessions[0];
-    const winnerColor =
+    const winnerSeatIndex = room.seats.indexOf(winnerSession);
+    const mappedColor =
       room.playerColors[winnerSession] ??
-      (room.seats[0] === winnerSession ? room.gameState.playerColors.player1 : room.gameState.playerColors.player2);
+      (winnerSeatIndex === 0 ? room.gameState.playerColors.player1 : room.gameState.playerColors.player2);
+    // 如果仍未确定颜色，按座位兜底指定红/蓝，确保能结算胜负
+    const winnerColor: PlayerColor | null = (mappedColor as PlayerColor | null) ?? (winnerSeatIndex === 0 ? 'red' : 'blue');
 
     if (winnerColor) {
+      room.playerColors[winnerSession] = winnerColor;
       const engine = roomManager.hydrateEngine(room.gameState);
       engine.endGame(winnerColor);
       room.gameState = roomManager.serializeEngine(engine);
