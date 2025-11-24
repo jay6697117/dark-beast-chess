@@ -113,6 +113,7 @@ export class RoomManager {
 
   // Helper to serialize
   serializeEngine(engine: CoreEngine) {
+    console.log('Serializing board:', JSON.stringify(engine.board));
     return {
       board: engine.board,
       phase: engine.phase,

@@ -126,89 +126,90 @@ export function useGameLogic() {
     mySeatIndex.value = null;
   };
 
-  // Network handlers
+  // Network handlers - Registered once
+  if (client.handlers.size === 0) {
+      client.on('ROOM_CREATED', (_type, payload) => {
+          isOnline.value = true;
+          roomId.value = payload.roomId;
+          sessionId.value = payload.sessionId;
+          mySeatIndex.value = 0; // Creator is always seat 0 (player1)
+          game.resetGame(); // Reset local board to clean state
+          game.addMessage(`房间已创建：${payload.roomId}，等待对手加入...`);
+      });
+
+      client.on('JOINED', (_type, payload) => {
+          isOnline.value = true;
+          roomId.value = payload.roomId;
+          sessionId.value = payload.sessionId;
+          mySeatIndex.value = payload.seatIndex;
+          if (payload.gameState) {
+              syncGameState(payload.gameState);
+          } else {
+              game.resetGame();
+          }
+          game.addMessage(`已加入房间：${payload.roomId}`);
+      });
+
+      client.on('PLAYER_JOINED', (_type, payload) => {
+          game.addMessage(`玩家加入，当前人数：${payload.count}`);
+      });
+
+      client.on('GAME_START', (_type, payload) => {
+          game.addMessage('游戏开始！');
+          if (payload.gameState) syncGameState(payload.gameState);
+      });
+
+      client.on('STATE_UPDATE', (_type, payload) => {
+          // Handle animation based on lastAction
+          if (payload.lastAction) {
+              const { action, payload: actionPayload, result } = payload.lastAction;
+              if (action === 'FLIP') {
+                  // Trigger flip animation locally then sync
+                  const piece = game.board[actionPayload.row][actionPayload.col];
+                  if (piece) {
+                      piece.isFlipping = true;
+                      setTimeout(() => {
+                          piece.isFlipping = false;
+                          syncGameState(payload.gameState);
+                      }, 400);
+                      return; // Defer sync
+                  }
+              } else if (action === 'MOVE') {
+                  // Trigger move animation
+                  const { fromRow, fromCol, targetRow, targetCol } = actionPayload;
+                  if (result && result.result) {
+                       game.executeBattleWithAnimation(fromRow, fromCol, targetRow, targetCol, result.result);
+                       setTimeout(() => {
+                            syncGameState(payload.gameState);
+                       }, 1000); // Wait for animation
+                       return;
+                  } else {
+                      game.executeMoveWithAnimation(fromRow, fromCol, targetRow, targetCol);
+                      setTimeout(() => {
+                           syncGameState(payload.gameState);
+                       }, 400);
+                       return;
+                  }
+              }
+          }
+          syncGameState(payload.gameState);
+      });
+
+      client.on('ERROR', (_type, payload) => {
+          game.addMessage(payload.message, 'error');
+      });
+
+      client.on('DISCONNECTED', () => {
+          isOnline.value = false;
+          game.addMessage('与服务器断开连接', 'error');
+      });
+  }
+
   const connectToServer = async () => {
       isConnecting.value = true;
       connectionError.value = undefined;
       try {
           await client.connect();
-
-          client.on('ROOM_CREATED', (_type, payload) => {
-              isOnline.value = true;
-              roomId.value = payload.roomId;
-              sessionId.value = payload.sessionId;
-              mySeatIndex.value = 0; // Creator is always seat 0 (player1)
-              game.resetGame(); // Reset local board to clean state
-              game.addMessage(`房间已创建：${payload.roomId}，等待对手加入...`);
-          });
-
-          client.on('JOINED', (_type, payload) => {
-              isOnline.value = true;
-              roomId.value = payload.roomId;
-              sessionId.value = payload.sessionId;
-              mySeatIndex.value = payload.seatIndex;
-              if (payload.gameState) {
-                  syncGameState(payload.gameState);
-              } else {
-                  game.resetGame();
-              }
-              game.addMessage(`已加入房间：${payload.roomId}`);
-          });
-
-          client.on('PLAYER_JOINED', (_type, payload) => {
-              game.addMessage(`玩家加入，当前人数：${payload.count}`);
-          });
-
-          client.on('GAME_START', (_type, payload) => {
-              game.addMessage('游戏开始！');
-              if (payload.gameState) syncGameState(payload.gameState);
-          });
-
-          client.on('STATE_UPDATE', (_type, payload) => {
-              // Handle animation based on lastAction
-              if (payload.lastAction) {
-                  const { action, payload: actionPayload, result } = payload.lastAction;
-                  if (action === 'FLIP') {
-                      // Trigger flip animation locally then sync
-                      const piece = game.board[actionPayload.row][actionPayload.col];
-                      if (piece) {
-                          piece.isFlipping = true;
-                          setTimeout(() => {
-                              piece.isFlipping = false;
-                              syncGameState(payload.gameState);
-                          }, 400);
-                          return; // Defer sync
-                      }
-                  } else if (action === 'MOVE') {
-                      // Trigger move animation
-                      const { fromRow, fromCol, targetRow, targetCol } = actionPayload;
-                      if (result && result.result) {
-                           game.executeBattleWithAnimation(fromRow, fromCol, targetRow, targetCol, result.result);
-                           setTimeout(() => {
-                                syncGameState(payload.gameState);
-                           }, 1000); // Wait for animation
-                           return;
-                      } else {
-                          game.executeMoveWithAnimation(fromRow, fromCol, targetRow, targetCol);
-                          setTimeout(() => {
-                               syncGameState(payload.gameState);
-                           }, 400);
-                           return;
-                      }
-                  }
-              }
-              syncGameState(payload.gameState);
-          });
-
-          client.on('ERROR', (_type, payload) => {
-              game.addMessage(payload.message, 'error');
-          });
-
-          client.on('DISCONNECTED', () => {
-              isOnline.value = false;
-              game.addMessage('与服务器断开连接', 'error');
-          });
-
       } catch (e) {
           connectionError.value = '连接服务器失败';
           isConnecting.value = false;
@@ -226,6 +227,7 @@ export function useGameLogic() {
   };
 
   const syncGameState = (state: any) => {
+      console.log('Syncing state:', state);
       // Update local game instance with server state
       game.board = state.board;
       game.phase = state.phase;

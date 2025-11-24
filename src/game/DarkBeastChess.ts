@@ -18,7 +18,6 @@ export class DarkBeastChess extends CoreEngine {
     // Override init to add message
     init() {
         super.init();
-        this.addMessage('游戏初始化完成，点击开始游戏按钮开始！');
     }
 
     // Override setupBoard to add animation flags
