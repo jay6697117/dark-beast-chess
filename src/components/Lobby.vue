@@ -13,14 +13,9 @@
         </button>
       </div>
 
-      <div class="divider">
-        <span>OR</span>
-      </div>
-
       <div class="action-group join-group">
         <h3>加入游戏</h3>
         <p class="action-desc">输入房间号加入现有对局</p>
-        <div class="join-input-wrapper">
           <input
             v-model="roomIdInput"
             type="text"
@@ -31,7 +26,6 @@
           <button class="action-btn join-btn" @click="joinRoom" :disabled="!roomIdInput || connecting">
             加入
           </button>
-        </div>
       </div>
 
       <div v-if="error" class="error-message">
@@ -176,57 +170,7 @@ const formatTime = (timestamp: number) => {
   margin-bottom: 1rem;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: #484f58;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin: 0.5rem 0;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-}
 
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  width: auto;
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: none;
-}
-
-.divider span {
-  padding: 0 10px;
-}
-
-.join-input-wrapper {
-  display: flex;
-  gap: 0.8rem;
-}
-
-.room-input {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.2);
-  color: white;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: monospace;
-  letter-spacing: 1px;
-}
-
-.room-input:focus {
-  outline: none;
-  border-color: #ffd700;
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-}
 
 /* Buttons */
 .action-btn {
@@ -255,17 +199,6 @@ const formatTime = (timestamp: number) => {
 .create-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
-}
-
-.join-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffd700;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-}
-
-.join-btn:hover:not(:disabled) {
-  background: rgba(255, 215, 0, 0.1);
-  border-color: #ffd700;
 }
 
 .action-btn:disabled {
@@ -452,20 +385,7 @@ const formatTime = (timestamp: number) => {
     gap: 1rem;
   }
 
-  .divider {
-    flex-direction: row;
-    margin: 0.5rem 0;
-  }
 
-  .divider::before,
-  .divider::after {
-    height: 1px;
-    width: 100%;
-  }
-
-  .divider span {
-    padding: 0 10px;
-  }
 
   .lobby-container {
     padding: 1.5rem;
