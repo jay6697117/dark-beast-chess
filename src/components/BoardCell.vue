@@ -37,6 +37,20 @@ const cellClasses = computed(() => {
   if (props.isSelected) classes.push('selected');
   return classes;
 });
+const pieceText = computed(() => {
+  if (!props.piece || !props.piece.revealed) return '';
+  const names: Record<string, string> = {
+    elephant: '象',
+    lion: '狮',
+    tiger: '虎',
+    leopard: '豹',
+    wolf: '狼',
+    dog: '狗',
+    cat: '猫',
+    mouse: '鼠'
+  };
+  return names[props.piece.type] || '';
+});
 </script>
 
 <template>
@@ -44,7 +58,9 @@ const cellClasses = computed(() => {
     :class="cellClasses"
     @click="emit('click')"
   >
-    <div v-if="piece" :class="pieceClasses" :id="piece.id"></div>
+    <div v-if="piece" :class="pieceClasses" :id="piece.id">
+        <span v-if="piece.revealed" class="piece-text">{{ pieceText }}</span>
+    </div>
   </div>
 </template>
 

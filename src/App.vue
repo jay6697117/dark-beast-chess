@@ -5,8 +5,13 @@ import BoardCell from './components/BoardCell.vue';
 import Lobby from './components/Lobby.vue';
 
 const {
+  game,
+  board,
+  turn,
   currentPlayer,
   status,
+  selectedCellId,
+  messages,
   redPiecesCount,
   bluePiecesCount,
   initGame,
@@ -17,8 +22,7 @@ const {
   isConnecting,
   connectionError,
   createRoom,
-  joinRoom,
-  game
+  joinRoom
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -114,27 +118,20 @@ const victoryMessage = computed(() => {
          </div>
       </div>
 
-      <div class="game-board-container" :class="[{ 'blur-bg': !isOnline && !gameStarted }, boardClass]">
-        <div class="board-grid" role="grid" aria-label="游戏棋盘">
-          <div
-            v-for="(row, rowIndex) in game.board"
-            :key="rowIndex"
-            class="board-row"
-            role="row"
-          >
-            <BoardCell
-              v-for="(piece, colIndex) in row"
-              :key="`${rowIndex}-${colIndex}`"
-              :piece="piece"
-              :row="rowIndex"
-              :col="colIndex"
-              :is-selected="game.selectedPiece?.row === rowIndex && game.selectedPiece?.col === colIndex"
-              :is-valid-move="false"
-              @click="handleCellClick(rowIndex, colIndex)"
-            />
+        <div class="game-board-container" :class="[{ 'blur-bg': !isOnline && !gameStarted }, boardClass]">
+          <div class="game-board" role="grid" aria-label="游戏棋盘">
+              <BoardCell
+                v-for="cell in board"
+                :key="cell.id"
+                :piece="cell.piece"
+                :row="cell.row"
+                :col="cell.col"
+                :is-selected="selectedCellId === cell.id"
+                :is-valid-move="false"
+                @click="handleCellClick(cell.row, cell.col)"
+              />
           </div>
         </div>
-      </div>
 
       <!-- 底部消息区域 -->
       <div class="game-messages" role="log" aria-live="polite">
