@@ -24,7 +24,9 @@ const {
   playersReady,
   myColor,
   turn,
-  messages
+  messages,
+  roomList,
+  fetchRooms
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -111,20 +113,24 @@ const victoryMessage = computed(() => {
     </aside>
 
     <main class="game-main" role="main" aria-label="游戏主区域">
-      <!-- 联机大厅 -->
+      <!-- 联机大厅（未进入房间时独占显示） -->
       <div v-if="!isOnline && !gameStarted" class="lobby-overlay">
          <Lobby
            :connecting="isConnecting"
            :error="connectionError"
+           :rooms="roomList"
            @create-room="createRoom"
            @join-room="joinRoom"
+           @refresh-rooms="fetchRooms"
          />
          <div class="local-play-option">
              <button class="text-btn" @click="startLocalGame">单机试玩</button>
          </div>
       </div>
 
-        <div class="game-board-container" :class="[{ 'blur-bg': !isOnline && !gameStarted }, boardClass]">
+      <!-- 棋盘与消息，仅在进入房间或本地游戏时显示 -->
+      <template v-else>
+        <div class="game-board-container" :class="[boardClass]">
           <div class="game-board" role="grid" aria-label="游戏棋盘">
               <BoardCell
                 v-for="cell in board"
@@ -139,14 +145,15 @@ const victoryMessage = computed(() => {
           </div>
         </div>
 
-      <!-- 底部消息区域 -->
-      <div class="game-messages" role="log" aria-live="polite">
-          <div class="message-list">
-          <div v-for="(msg, index) in messages.slice(0, 3)" :key="index" :class="['message-item', msg.type]">
-            <span class="bullet">•</span> {{ msg.text }}
+        <!-- 底部消息区域 -->
+        <div class="game-messages" role="log" aria-live="polite">
+            <div class="message-list">
+            <div v-for="(msg, index) in messages.slice(0, 3)" :key="index" :class="['message-item', msg.type]">
+              <span class="bullet">•</span> {{ msg.text }}
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </main>
 
     <!-- 右侧信息面板 -->

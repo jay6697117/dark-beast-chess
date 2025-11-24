@@ -14,6 +14,8 @@ const connectionError = ref<string | undefined>(undefined);
 const myColor = ref<PlayerColor | null>(null);
 const mySeatIndex = ref<number | null>(null);
 const playersReady = ref(false);
+const roomList = ref<Array<{ id: string; status: string; seats: number; createdAt: number }>>([]);
+let roomListPoller: ReturnType<typeof setInterval> | null = null;
 
 export function useGameLogic() {
   const board = computed(() => {
@@ -76,6 +78,7 @@ export function useGameLogic() {
     playersReady.value = false;
     myColor.value = null;
     mySeatIndex.value = null;
+    stopRoomPolling();
     game.startGame();
   };
 
@@ -122,6 +125,7 @@ export function useGameLogic() {
     myColor.value = null;
     mySeatIndex.value = null;
     playersReady.value = false;
+    startRoomPolling();
   };
 
   if (client.handlers.size === 0) {
@@ -133,6 +137,7 @@ export function useGameLogic() {
           playersReady.value = false;
           game.resetGame();
           game.addMessage(`房间已创建：${payload.roomId}，等待对手加入...`);
+          stopRoomPolling();
       });
 
       client.on('JOINED', (_type, payload) => {
@@ -150,6 +155,7 @@ export function useGameLogic() {
               playersReady.value = false;
           }
           game.addMessage(`已加入房间：${payload.roomId}`);
+          stopRoomPolling();
       });
 
       client.on('PLAYER_JOINED', (_type, payload) => {
@@ -208,7 +214,40 @@ export function useGameLogic() {
           isOnline.value = false;
           playersReady.value = false;
           game.addMessage('与服务器断开连接', 'error');
+          startRoomPolling();
       });
+  }
+
+  const fetchRooms = async () => {
+      try {
+          const res = await fetch('/rooms');
+          if (!res.ok) return;
+          const data = await res.json();
+          roomList.value = data.rooms ?? [];
+      } catch (_e) {
+          // 静默失败，避免打扰用户
+      }
+  };
+
+  const startRoomPolling = () => {
+      if (roomListPoller !== null) return;
+      fetchRooms();
+      roomListPoller = setInterval(() => {
+          if (!isOnline.value && !gameStarted.value) {
+              fetchRooms();
+          }
+      }, 5000);
+  };
+
+  const stopRoomPolling = () => {
+      if (roomListPoller !== null) {
+          clearInterval(roomListPoller);
+          roomListPoller = null;
+      }
+  };
+
+  if (typeof window !== 'undefined') {
+      startRoomPolling();
   }
 
   const connectToServer = async () => {
@@ -284,6 +323,8 @@ export function useGameLogic() {
     gameStarted,
     startLocalGame,
     isCreator,
-    playersReady
+    playersReady,
+    roomList,
+    fetchRooms
   };
 }

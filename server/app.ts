@@ -13,6 +13,11 @@ export function createApp() {
 
   app.get('/', (c) => c.text('Dark Beast Chess Server is Running!'));
 
+  app.get('/rooms', async (c) => {
+    const rooms = await roomManager.listRooms();
+    return c.json({ rooms });
+  });
+
   app.get('/ws', (c) => {
     const { response, socket: ws } = Deno.upgradeWebSocket(c.req.raw);
     const sessionId = crypto.randomUUID();

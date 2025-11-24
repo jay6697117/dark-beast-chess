@@ -140,4 +140,23 @@ export class RoomManager {
   async saveRoom(room: Room) {
       await kv.set(['rooms', room.id], room);
   }
+
+  async listRooms(): Promise<Array<{ id: string; status: Room['status']; seats: number; createdAt: number }>> {
+      const rooms: Array<{ id: string; status: Room['status']; seats: number; createdAt: number }> = [];
+      const iter = kv.list<Room>({ prefix: ['rooms'] });
+
+      for await (const entry of iter) {
+          const r = entry.value;
+          rooms.push({
+              id: r.id,
+              status: r.status,
+              seats: r.seats.filter(Boolean).length,
+              createdAt: r.createdAt,
+          });
+      }
+
+      // 按创建时间倒序，最新的在前
+      rooms.sort((a, b) => b.createdAt - a.createdAt);
+      return rooms;
+  }
 }
