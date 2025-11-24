@@ -2333,6 +2333,55 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* 全局 Toast 提示 */
+.toast-container {
+    position: fixed;
+    top: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--text-primary);
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    min-width: 220px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(12px);
+}
+
+.toast.info {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+}
+
+.toast.error {
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.toast.success {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+}
+
 .message-list {
     display: flex;
     flex-direction: column;

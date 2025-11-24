@@ -26,6 +26,7 @@ const {
   messages,
   roomList,
   fetchRooms
+  toast
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -65,6 +66,14 @@ const victoryMessage = computed(() => {
 
 <template>
   <div class="game-container" role="application" aria-label="暗兽棋游戏">
+    <div class="toast-container" aria-live="assertive">
+      <transition name="toast-fade">
+        <div v-if="toast" class="toast" :class="toast.type">
+          {{ toast.text }}
+        </div>
+      </transition>
+    </div>
+
     <!-- 左侧控制面板 -->
     <aside class="game-sidebar-left" role="complementary" aria-label="游戏控制面板">
       <header class="game-header">

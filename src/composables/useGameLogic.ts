@@ -16,6 +16,17 @@ const mySeatIndex = ref<number | null>(null);
 const playersReady = ref(false);
 const roomList = ref<Array<{ id: string; status: string; seats: number; createdAt: number }>>([]);
 let roomListPoller: ReturnType<typeof setInterval> | null = null;
+const toast = ref<{ text: string; type: 'info' | 'error' | 'success' } | null>(null);
+let toastTimer: ReturnType<typeof setTimeout> | null = null;
+
+const showToast = (text: string, type: 'info' | 'error' | 'success' = 'info') => {
+  toast.value = { text, type };
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.value = null;
+    toastTimer = null;
+  }, 2200);
+};
 
 const apiBase = (() => {
   // @ts-ignore
@@ -100,7 +111,7 @@ export function useGameLogic() {
   const handleCellClick = (row: number, col: number) => {
     if (isOnline.value) {
         if (game.phase === 'SETUP') {
-            game.addMessage('房主请开始游戏', 'important');
+            showToast('房主请开始游戏', 'info');
             return;
         }
         const piece = game.board[row][col];
@@ -359,6 +370,8 @@ export function useGameLogic() {
     isCreator,
     playersReady,
     roomList,
-    fetchRooms
+    fetchRooms,
+    toast,
+    showToast
   };
 }
