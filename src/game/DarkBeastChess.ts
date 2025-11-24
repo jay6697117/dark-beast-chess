@@ -174,6 +174,9 @@ export class DarkBeastChess {
 
             this.phase = 'PLAYING';
             this.addMessage(`翻开了${this.getAnimalName(piece.type)}(${this.getColorName(piece.color)})，您是${this.getColorName(piece.color)}方！`, 'important');
+
+            // Switch turn to the other player immediately
+            this.endTurn();
         }, 400); // Half of animation time roughly
     }
 
