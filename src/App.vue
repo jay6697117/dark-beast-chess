@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 import { useGameLogic } from './composables/useGameLogic';
 import BoardCell from './components/BoardCell.vue';
 
@@ -16,10 +16,6 @@ const {
   handleCellClick,
   resetGame
 } = useGameLogic();
-
-onMounted(() => {
-  initGame();
-});
 
 const phaseText = computed(() => {
   switch (status.value) {
