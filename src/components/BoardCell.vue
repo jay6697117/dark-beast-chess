@@ -59,7 +59,10 @@ const pieceText = computed(() => {
     @click="emit('click')"
   >
     <div v-if="piece" :class="pieceClasses" :id="piece.id">
-        <span v-if="piece.revealed" class="piece-text">{{ pieceText }}</span>
+        <template v-if="piece.revealed">
+            <span class="piece-text-corner top-left">{{ pieceText }}</span>
+            <span class="piece-text-corner bottom-right">{{ pieceText }}</span>
+        </template>
     </div>
   </div>
 </template>
@@ -67,4 +70,33 @@ const pieceText = computed(() => {
 <style scoped>
 /* Styles are imported globally in style.css, but we can add scoped overrides if needed */
 /* The global styles.css expects .board-cell and .piece classes */
+.piece-text-corner {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: inherit;
+  text-shadow: 0 0 2px rgba(0,0,0,0.8);
+  pointer-events: none;
+  line-height: 1;
+  z-index: 10;
+}
+
+.top-left {
+  top: 6px;
+  left: 6px;
+}
+
+.bottom-right {
+  bottom: 6px;
+  right: 6px;
+  transform: rotate(180deg);
+}
+
+.piece.red .piece-text-corner {
+  color: #ff4757;
+}
+
+.piece.blue .piece-text-corner {
+  color: #5352ed;
+}
 </style>

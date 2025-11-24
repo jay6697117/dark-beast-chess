@@ -101,7 +101,12 @@ const victoryMessage = computed(() => {
              aria-label="当前玩家信息">
           <div class="player-indicator" :class="currentPlayer" aria-hidden="true"></div>
           <span id="playerText">
-            {{ currentPlayer ? `当前玩家：${currentPlayer === 'red' ? '红' : '蓝'}方` : '点击开始游戏' }}
+            <template v-if="currentPlayer">
+              等待<span :class="['player-name', currentPlayer]">{{ currentPlayer === 'red' ? '红方' : '蓝方' }}</span>操作
+            </template>
+            <template v-else>
+              点击开始游戏
+            </template>
           </span>
         </div>
 
@@ -272,5 +277,18 @@ const victoryMessage = computed(() => {
     background-color: rgba(0, 0, 255, 0.2);
     color: #4d4dff;
     border: 1px solid #4d4dff;
+}
+
+.player-name {
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.player-name.red {
+  color: #ff4757;
+}
+
+.player-name.blue {
+  color: #5352ed;
 }
 </style>

@@ -26,6 +26,7 @@ export function createApp() {
     const { response, socket: ws } = Deno.upgradeWebSocket(c.req.raw);
     const sessionId = crypto.randomUUID();
     let currentRoomId: string | null = null;
+    let gameStarted = false;
 
     ws.onopen = () => {
       console.log(`Client connected: ${sessionId}`);
@@ -55,6 +56,7 @@ export function createApp() {
 
             const room = await roomManager.getRoom(roomId);
             const seatIndex = room?.seats.indexOf(sessionId);
+            gameStarted = room?.gameState?.phase !== 'SETUP';
 
             ws.send(
               JSON.stringify({
@@ -86,6 +88,7 @@ export function createApp() {
           if (!currentRoomId) return;
           const room = await roomManager.getRoom(currentRoomId);
           if (!room) return;
+          gameStarted = true;
 
           // Only creator (seat 0) can start
           if (room.seats[0] !== sessionId) {
@@ -168,27 +171,8 @@ export function createApp() {
 
     ws.onclose = () => {
       console.log(`Client disconnected: ${sessionId}`);
-      if (currentRoomId) {
-        roomManager.leaveRoom(currentRoomId, sessionId).then(({ deleted }) => {
-          // 清理连接集合
-          const conns = activeConnections.get(currentRoomId!);
-          if (conns) {
-            conns.delete(ws);
-            if (deleted) {
-              // 通知并断开其他连接
-              broadcastToRoom(currentRoomId!, { type: 'ROOM_CLOSED' });
-              for (const other of conns) {
-                if (other !== ws && other.readyState === WebSocket.OPEN) {
-                  other.close();
-                }
-              }
-              activeConnections.delete(currentRoomId!);
-            } else if (conns.size === 0) {
-              activeConnections.delete(currentRoomId!);
-            }
-          }
-        });
-      }
+      if (!currentRoomId) return;
+      handleDisconnect(currentRoomId, sessionId, ws, gameStarted);
     };
 
     return response;
@@ -211,6 +195,90 @@ export function createApp() {
         }
       }
     }
+  }
+
+  async function closeRoom(roomId: string) {
+    const conns = activeConnections.get(roomId);
+    broadcastToRoom(roomId, { type: 'ROOM_CLOSED' });
+    if (conns) {
+      for (const sock of conns) {
+        if (sock.readyState === WebSocket.OPEN) {
+          sock.close();
+        }
+      }
+      activeConnections.delete(roomId);
+    }
+    await roomManager.deleteRoom(roomId);
+  }
+
+  async function handleDisconnect(roomId: string, sessionId: string, ws: WebSocket, startedFlag: boolean) {
+    const conns = activeConnections.get(roomId);
+    if (conns) conns.delete(ws);
+
+    const room = await roomManager.getRoom(roomId);
+    if (!room) {
+      if (conns && conns.size === 0) activeConnections.delete(roomId);
+      return;
+    }
+
+    // Remove leaver from seats and compute remaining
+    const seatIndex = room.seats.indexOf(sessionId);
+    if (seatIndex === -1) {
+      if (conns && conns.size === 0) activeConnections.delete(roomId);
+      return;
+    }
+    const isCreator = seatIndex === 0;
+    room.seats[seatIndex] = null;
+    delete room.playerColors[sessionId];
+    const remainingSessions = room.seats.filter((s): s is string => !!s);
+    const remainingCount = remainingSessions.length;
+    const hasStarted = startedFlag || room.gameState.phase !== 'SETUP';
+
+    // Case 1: 房间无人或仅一人且是当前离开者 -> 解散
+    if (remainingCount === 0) {
+      await closeRoom(roomId);
+      return;
+    }
+
+    // Case 2: 未开局
+    if (!hasStarted) {
+      if (isCreator) {
+        await closeRoom(roomId);
+        return;
+      } else {
+        // 非房主离开，回到等待状态
+        room.status = 'WAITING';
+        room.lastUpdated = Date.now();
+        await roomManager.saveRoom(room);
+        broadcastToRoom(roomId, { type: 'PLAYER_JOINED', count: 1 });
+        return;
+      }
+    }
+
+    // Case 3: 已开局，提前退出判负
+    const winnerSession = remainingSessions[0];
+    const winnerColor =
+      room.playerColors[winnerSession] ??
+      (room.seats[0] === winnerSession ? room.gameState.playerColors.player1 : room.gameState.playerColors.player2);
+
+    if (winnerColor) {
+      const engine = roomManager.hydrateEngine(room.gameState);
+      engine.endGame(winnerColor);
+      room.gameState = roomManager.serializeEngine(engine);
+    }
+    room.status = 'FINISHED';
+    room.lastUpdated = Date.now();
+    await roomManager.saveRoom(room);
+
+    broadcastToRoom(roomId, {
+      type: 'STATE_UPDATE',
+      gameState: room.gameState,
+      lastAction: { action: 'FORFEIT', payload: { leaver: sessionId }, result: null },
+    });
+
+    setTimeout(() => {
+      closeRoom(roomId);
+    }, 3000);
   }
 
   return app;

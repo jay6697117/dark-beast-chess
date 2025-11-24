@@ -195,6 +195,7 @@ export function useGameLogic() {
       });
 
       client.on('PLAYER_JOINED', (_type, payload) => {
+          playersReady.value = payload?.count === 2;
           game.addMessage(`玩家加入，当前人数：${payload.count}`);
       });
 
@@ -259,11 +260,11 @@ export function useGameLogic() {
 
       client.on('DISCONNECTED', () => {
           isOnline.value = false;
-          playersReady.value = false;
           roomId.value = null;
           sessionId.value = null;
           mySeatIndex.value = null;
           myColor.value = null;
+          playersReady.value = false;
           game.addMessage('与服务器断开连接', 'error');
           startRoomPolling();
       });

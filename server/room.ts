@@ -143,6 +143,10 @@ export class RoomManager {
       await kv.set(['rooms', room.id], room);
   }
 
+  async deleteRoom(roomId: string) {
+      await kv.delete(['rooms', roomId]);
+  }
+
   async leaveRoom(roomId: string, sessionId: string): Promise<{ removed: boolean; deleted: boolean }> {
       const roomRes = await kv.get<Room>(['rooms', roomId]);
       const room = roomRes.value;
