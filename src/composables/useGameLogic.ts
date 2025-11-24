@@ -251,7 +251,7 @@ export function useGameLogic() {
           if (!isOnline.value && !gameStarted.value) {
               fetchRooms();
           }
-      }, 5000);
+      }, 3000);
   };
 
   const stopRoomPolling = () => {
