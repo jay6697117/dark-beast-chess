@@ -145,14 +145,7 @@ const victoryMessage = computed(() => {
           </div>
         </div>
 
-        <!-- 底部消息区域 -->
-        <div class="game-messages" role="log" aria-live="polite">
-            <div class="message-list">
-            <div v-for="(msg, index) in messages.slice(0, 3)" :key="index" :class="['message-item', msg.type]">
-              <span class="bullet">•</span> {{ msg.text }}
-            </div>
-          </div>
-        </div>
+
       </template>
     </main>
 
@@ -175,6 +168,18 @@ const victoryMessage = computed(() => {
           <div class="stat-item">
             <span class="stat-label">回合数:</span>
             <span class="stat-value">{{ turn }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 游戏消息日志 -->
+      <section class="game-messages-section" aria-labelledby="messages-section-heading">
+        <h2 id="messages-section-heading" class="section-title">操作日志</h2>
+        <div class="game-messages" role="log" aria-live="polite">
+            <div class="message-list">
+            <div v-for="(msg, index) in messages" :key="index" :class="['message-item', msg.type]">
+              <span class="bullet">•</span> {{ msg.text }}
+            </div>
           </div>
         </div>
       </section>
