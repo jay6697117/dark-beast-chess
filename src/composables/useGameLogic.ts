@@ -329,6 +329,20 @@ export function useGameLogic() {
       }
   };
 
+  const leaveRoom = () => {
+      if (!isOnline.value) return;
+      client.disconnect();
+      isOnline.value = false;
+      roomId.value = null;
+      sessionId.value = null;
+      myColor.value = null;
+      mySeatIndex.value = null;
+      playersReady.value = false;
+      game.resetGame();
+      startRoomPolling();
+      showToast('已退出房间', 'info');
+  };
+
   const syncGameState = (state: any) => {
       game.board = state.board;
       game.phase = state.phase;
@@ -378,6 +392,7 @@ export function useGameLogic() {
     roomList,
     fetchRooms,
     toast,
-    showToast
+    showToast,
+    leaveRoom
   };
 }

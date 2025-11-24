@@ -130,4 +130,13 @@ export class GameClient {
     sendAction(action: 'FLIP' | 'MOVE', payload: any) {
         this.send('ACTION', { action, payload });
     }
+
+    disconnect() {
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
+        this.sessionId = null;
+        this.roomId = null;
+    }
 }
