@@ -44,9 +44,10 @@ export function useGameLogic() {
   });
 
   const initGame = () => {
-    // Game is already initialized in constructor, but we can reset if needed
-    if (game.phase === 'GAME_OVER') {
-        game.resetGame();
+    if (game.phase === 'SETUP') {
+      game.startGame();
+    } else if (game.phase === 'GAME_OVER') {
+      game.resetGame();
     }
   };
 
