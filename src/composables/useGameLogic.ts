@@ -99,6 +99,10 @@ export function useGameLogic() {
 
   const handleCellClick = (row: number, col: number) => {
     if (isOnline.value) {
+        if (game.phase === 'SETUP') {
+            game.addMessage('房主请开始游戏', 'important');
+            return;
+        }
         const piece = game.board[row][col];
 
         if (game.phase === 'COLOR_SELECTION') {
