@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { cors } from 'hono/middleware/cors';
+import { cors } from 'hono/middleware.ts';
 
 import { RoomManager } from './room.ts';
 
