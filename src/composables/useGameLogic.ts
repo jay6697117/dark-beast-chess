@@ -225,7 +225,6 @@ export function useGameLogic() {
   };
 
   const syncGameState = (state: any) => {
-      console.log('Syncing state:', state);
       // Update local game instance with server state
       game.board = state.board;
       game.phase = state.phase;

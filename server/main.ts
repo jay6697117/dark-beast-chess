@@ -59,7 +59,18 @@ app.get('/ws', (c) => {
               // Refetch room to get updated status
               const updatedRoom = await roomManager.getRoom(roomId);
               if (updatedRoom?.status === 'PLAYING') {
-                   broadcastToRoom(roomId, { type: 'GAME_START', gameState: updatedRoom.gameState });
+                   // Start the game engine
+                   const engine = roomManager.hydrateEngine(updatedRoom.gameState);
+                   if (engine.phase === 'SETUP') {
+                       engine.startGame();
+                       await roomManager.updateRoomState(roomId, engine);
+
+                       // Get the latest room state again after update
+                       const startedRoom = await roomManager.getRoom(roomId);
+                       broadcastToRoom(roomId, { type: 'GAME_START', gameState: startedRoom?.gameState });
+                   } else {
+                       broadcastToRoom(roomId, { type: 'GAME_START', gameState: updatedRoom.gameState });
+                   }
               }
           } else {
               ws.send(JSON.stringify({ type: 'ERROR', message: result.error }));
