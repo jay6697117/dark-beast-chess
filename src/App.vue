@@ -37,20 +37,7 @@ const phaseClass = computed(() => {
   }
 });
 
-const turnTitle = computed(() => {
-  if (status.value === 'SETUP') return '点击开始游戏';
-  if (status.value === 'GAME_OVER') return '游戏结束';
-  if (currentPlayer.value === 'red') return '红方回合';
-  if (currentPlayer.value === 'blue') return '蓝方回合';
-  return '点击开始游戏';
-});
 
-const turnClass = computed(() => {
-  if (status.value === 'PLAYING' && currentPlayer.value) {
-    return `${currentPlayer.value}-turn`;
-  }
-  return '';
-});
 
 const boardClass = computed(() => {
   if (status.value === 'PLAYING' && currentPlayer.value) {
@@ -168,13 +155,7 @@ const victoryMessage = computed(() => {
 
     <!-- 右侧信息面板 -->
     <aside class="game-sidebar-right" role="complementary" aria-label="游戏信息和消息面板">
-      <!-- 回合指示信息 -->
-      <section class="turn-info" aria-labelledby="turn-info-heading">
-        <h2 id="turn-info-heading" class="sr-only">回合信息</h2>
-        <div class="turn-indicator" :class="turnClass" role="status" aria-live="polite">
-          <h3 class="turn-title" id="turnTitle">{{ turnTitle }}</h3>
-        </div>
-      </section>
+
 
       <!-- 游戏统计 -->
       <section class="game-stats-section" aria-labelledby="stats-section-heading">
