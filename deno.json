@@ -1,7 +1,9 @@
 {
   "tasks": {
     "start": "deno run --allow-net --allow-read --allow-write --allow-env --unstable-kv server/main.ts",
-    "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable-kv server/main.ts"
+    "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable-kv server/main.ts",
+    "build": "npm install && npm run build",
+    "serve": "deno run -A main.ts"
   },
   "imports": {
     "hono": "https://deno.land/x/hono/mod.ts",
@@ -9,5 +11,8 @@
   },
   "compilerOptions": {
     "lib": ["deno.window", "deno.ns", "dom"]
+  },
+  "deploy": {
+    "entrypoint": "main.ts"
   }
 }

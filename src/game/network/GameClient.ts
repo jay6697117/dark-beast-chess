@@ -2,13 +2,21 @@
 
 type MessageHandler = (type: string, payload: any) => void;
 
+const defaultWsUrl = (() => {
+    if (typeof location !== 'undefined') {
+        const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${protocol}//${location.host}/ws`;
+    }
+    return 'ws://localhost:8000/ws';
+})();
+
 export class GameClient {
     ws: WebSocket | null = null;
     handlers: Map<string, MessageHandler[]> = new Map();
     sessionId: string | null = null;
     roomId: string | null = null;
 
-    connect(url: string = 'ws://localhost:8000/ws'): Promise<void> {
+    connect(url: string = defaultWsUrl): Promise<void> {
         return new Promise((resolve, reject) => {
             this.ws = new WebSocket(url);
 
