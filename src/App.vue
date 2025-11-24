@@ -14,7 +14,6 @@ const {
   initGame,
   handleCellClick,
   gameStarted,
-  startLocalGame,
   isOnline,
   isConnecting,
   connectionError,
@@ -123,9 +122,7 @@ const victoryMessage = computed(() => {
            @join-room="joinRoom"
            @refresh-rooms="fetchRooms"
          />
-         <div class="local-play-option">
-             <button class="text-btn" @click="startLocalGame">单机试玩</button>
-         </div>
+
       </div>
 
       <!-- 棋盘与消息，仅在进入房间或本地游戏时显示 -->

@@ -111,17 +111,18 @@ const formatTime = (timestamp: number) => {
 <style scoped>
 .lobby-container {
   background: rgba(22, 27, 34, 0.95);
-  padding: 2.5rem;
+  padding: 3rem;
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   text-align: center;
-  max-width: 900px;
+  max-width: 1100px;
   width: 95%;
+  min-height: 600px;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .lobby-title {
@@ -136,29 +137,40 @@ const formatTime = (timestamp: number) => {
 }
 
 .lobby-content {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 3rem;
-  text-align: left;
-}
-
-/* Left Panel */
-.lobby-actions-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-right: 1.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 2rem;
+  text-align: left;
+  flex: 1;
+  height: 100%;
+}
+
+/* Top Panel: Actions */
+.lobby-actions-panel {
+  display: flex;
+  gap: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: none; /* Remove previous border */
+  padding-right: 0; /* Remove previous padding */
+}
+
+.action-group {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .action-group h3 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #e6edf3;
   margin-bottom: 0.5rem;
 }
 
 .action-desc {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #8b949e;
   margin-bottom: 1rem;
 }
@@ -170,18 +182,22 @@ const formatTime = (timestamp: number) => {
   color: #484f58;
   font-size: 0.8rem;
   font-weight: bold;
-  margin: 0.5rem 0;
+  margin: 0;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .divider::before,
 .divider::after {
   content: '';
-  flex: 1;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 40px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: none;
 }
 
 .divider span {
-  padding: 0 10px;
+  padding: 10px 0;
 }
 
 .join-input-wrapper {
@@ -255,12 +271,12 @@ const formatTime = (timestamp: number) => {
   filter: grayscale(1);
 }
 
-/* Right Panel */
+/* Bottom Panel: Room List */
 .lobby-rooms-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 300px;
+  flex: 1; /* Fill remaining vertical space */
+  min-height: 0; /* Allow flex child to scroll */
 }
 
 .room-list-header {
@@ -302,7 +318,7 @@ const formatTime = (timestamp: number) => {
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 1rem;
   overflow-y: auto;
-  max-height: 400px;
+  /* Remove fixed height constraints to let flex handle it */
 }
 
 .room-empty {
@@ -321,9 +337,9 @@ const formatTime = (timestamp: number) => {
 }
 
 .room-items {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Grid layout for room items */
+  gap: 1rem;
 }
 
 .room-item {
@@ -340,7 +356,7 @@ const formatTime = (timestamp: number) => {
 .room-item:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.1);
-  transform: translateX(4px);
+  transform: translateY(-2px);
 }
 
 .room-info {
@@ -428,16 +444,24 @@ const formatTime = (timestamp: number) => {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .lobby-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .lobby-actions-panel {
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .lobby-actions-panel {
-    padding-right: 0;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 2rem;
+  .divider {
+    flex-direction: row;
+    margin: 0.5rem 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    height: 1px;
+    width: 100%;
+  }
+
+  .divider span {
+    padding: 0 10px;
   }
 
   .lobby-container {
