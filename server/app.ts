@@ -174,13 +174,18 @@ export function createApp() {
           const conns = activeConnections.get(currentRoomId!);
           if (conns) {
             conns.delete(ws);
-            if (conns.size === 0) activeConnections.delete(currentRoomId!);
-          }
-
-          // 如果房间被删除，则通知其他人断开
-          if (deleted) {
-            broadcastToRoom(currentRoomId!, { type: 'ROOM_CLOSED' });
-            activeConnections.delete(currentRoomId!);
+            if (deleted) {
+              // 通知并断开其他连接
+              broadcastToRoom(currentRoomId!, { type: 'ROOM_CLOSED' });
+              for (const other of conns) {
+                if (other !== ws && other.readyState === WebSocket.OPEN) {
+                  other.close();
+                }
+              }
+              activeConnections.delete(currentRoomId!);
+            } else if (conns.size === 0) {
+              activeConnections.delete(currentRoomId!);
+            }
           }
         });
       }

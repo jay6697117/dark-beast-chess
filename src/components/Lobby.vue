@@ -2,44 +2,76 @@
 <div class="lobby-container">
   <h2 class="lobby-title">联机对战大厅</h2>
 
-  <div class="lobby-actions">
-    <button class="action-btn create-btn" @click="$emit('create-room')" :disabled="connecting">
-      {{ connecting ? '连接中...' : '创建房间' }}
-    </button>
+  <div class="lobby-content">
+    <!-- 左侧：操作区域 -->
+    <div class="lobby-actions-panel">
+      <div class="action-group create-group">
+        <h3>创建新游戏</h3>
+        <p class="action-desc">创建一个新房间，等待朋友加入</p>
+        <button class="action-btn create-btn" @click="$emit('create-room')" :disabled="connecting">
+          {{ connecting ? '连接中...' : '创建房间' }}
+        </button>
+      </div>
 
-    <div class="join-section">
-      <input
-        v-model="roomIdInput"
-        type="text"
-        placeholder="输入房间号"
-        class="room-input"
-        @keyup.enter="joinRoom"
-      />
-      <button class="action-btn join-btn" @click="joinRoom" :disabled="!roomIdInput || connecting">
-        加入房间
-      </button>
-    </div>
-  </div>
+      <div class="divider">
+        <span>OR</span>
+      </div>
 
-  <div v-if="error" class="error-message">
-    {{ error }}
-  </div>
-
-  <div class="room-list">
-    <div class="room-list-header">
-      <span>房间列表</span>
-      <button class="refresh-btn" @click="$emit('refresh-rooms')" :disabled="connecting">刷新</button>
-    </div>
-    <div v-if="rooms.length === 0" class="room-empty">暂无房间，创建一个吧</div>
-    <div v-else class="room-items">
-      <div v-for="room in rooms" :key="room.id" class="room-item">
-        <div class="room-meta">
-          <div class="room-id">房间号：{{ room.id }}</div>
-          <div class="room-status">状态：{{ room.status === 'WAITING' ? '等待中' : room.status === 'PLAYING' ? '进行中' : '已结束' }}</div>
+      <div class="action-group join-group">
+        <h3>加入游戏</h3>
+        <p class="action-desc">输入房间号加入现有对局</p>
+        <div class="join-input-wrapper">
+          <input
+            v-model="roomIdInput"
+            type="text"
+            placeholder="输入房间号"
+            class="room-input"
+            @keyup.enter="joinRoom"
+          />
+          <button class="action-btn join-btn" @click="joinRoom" :disabled="!roomIdInput || connecting">
+            加入
+          </button>
         </div>
-        <div class="room-actions">
-          <span class="room-seats">人数：{{ room.seats }}/2</span>
-          <button class="action-btn join-btn" @click="$emit('join-room', room.id)" :disabled="connecting || room.seats >= 2">加入</button>
+      </div>
+
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+    </div>
+
+    <!-- 右侧：房间列表 -->
+    <div class="lobby-rooms-panel">
+      <div class="room-list-header">
+        <h3>房间列表</h3>
+        <button class="refresh-btn" @click="$emit('refresh-rooms')" :disabled="connecting">
+          <span class="icon">↻</span> 刷新
+        </button>
+      </div>
+
+      <div class="room-list-container">
+        <div v-if="rooms.length === 0" class="room-empty">
+          <div class="empty-icon">📭</div>
+          <p>暂无房间，创建一个吧</p>
+        </div>
+        <div v-else class="room-items">
+          <div v-for="room in rooms" :key="room.id" class="room-item">
+            <div class="room-info">
+              <div class="room-id">
+                <span class="label">ID:</span>
+                <span class="value">{{ room.id }}</span>
+              </div>
+              <div class="room-status-badge" :class="room.status.toLowerCase()">
+                {{ room.status === 'WAITING' ? '等待中' : room.status === 'PLAYING' ? '进行中' : '已结束' }}
+              </div>
+            </div>
+            <div class="room-meta">
+              <span class="room-seats">👤 {{ room.seats }}/2</span>
+              <span class="room-time">{{ formatTime(room.createdAt) }}</span>
+            </div>
+            <button class="action-btn item-join-btn" @click="$emit('join-room', room.id)" :disabled="connecting || room.seats >= 2">
+              加入
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -69,183 +101,347 @@ const joinRoom = () => {
     emit('join-room', roomIdInput.value.toUpperCase());
   }
 };
+
+const formatTime = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+};
 </script>
 
 <style scoped>
 .lobby-container {
-  background: rgba(30, 30, 40, 0.95);
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  background: rgba(22, 27, 34, 0.95);
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   text-align: center;
-  max-width: 400px;
-  width: 100%;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 900px;
+  width: 95%;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .lobby-title {
-  color: #fbbf24;
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
 }
 
-.lobby-actions {
+.lobby-content {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 3rem;
+  text-align: left;
+}
+
+/* Left Panel */
+.lobby-actions-panel {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding-right: 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.action-btn {
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #1a1a1a;
+.action-group h3 {
+  font-size: 1.2rem;
+  color: #e6edf3;
+  margin-bottom: 0.5rem;
 }
 
-.action-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.action-desc {
+  font-size: 0.9rem;
+  color: #8b949e;
+  margin-bottom: 1rem;
 }
 
-.create-btn {
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-}
-
-.create-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
-}
-
-.join-section {
+.divider {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  color: #484f58;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.join-input-wrapper {
+  display: flex;
+  gap: 0.8rem;
 }
 
 .room-input {
   flex: 1;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.3);
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 1rem;
-  text-transform: uppercase;
+  transition: all 0.3s ease;
+  font-family: monospace;
+  letter-spacing: 1px;
 }
 
 .room-input:focus {
   outline: none;
-  border-color: #fbbf24;
+  border-color: #ffd700;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+/* Buttons */
+.action-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.create-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+}
+
+.create-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
 }
 
 .join-btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .join-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
 }
 
-.error-message {
-  margin-top: 1rem;
-  color: #ef4444;
-  font-size: 0.9rem;
-  background: rgba(239, 68, 68, 0.1);
-  padding: 0.5rem;
-  border-radius: 4px;
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
-.room-list {
-  margin-top: 1.5rem;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: left;
+/* Right Panel */
+.lobby-rooms-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
 }
 
 .room-list-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  color: #fbbf24;
-  margin-bottom: 0.8rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.room-list-header h3 {
+  font-size: 1.1rem;
+  color: #e6edf3;
+  margin: 0;
 }
 
 .refresh-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fbbf24;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  border: none;
+  color: #8b949e;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.refresh-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: rgba(251, 191, 36, 0.1);
+  color: #ffd700;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.room-list-container {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 400px;
 }
 
 .room-empty {
-  color: #cbd5f5;
-  font-size: 0.95rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8b949e;
+  gap: 1rem;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  opacity: 0.5;
 }
 
 .room-items {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.8rem;
 }
 
 .room-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+}
+
+.room-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.room-id .label {
+  color: #8b949e;
+  font-size: 0.8rem;
+  margin-right: 6px;
+}
+
+.room-id .value {
+  color: #e6edf3;
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.room-status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.room-status-badge.waiting {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+}
+
+.room-status-badge.playing {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
 }
 
 .room-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  color: #e5e7eb;
-}
-
-.room-id {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.room-status {
-  font-size: 0.9rem;
-  color: #cbd5f5;
-}
-
-.room-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-end;
+  gap: 0.2rem;
+  margin-right: 1rem;
 }
 
 .room-seats {
-  color: #cbd5f5;
-  font-size: 0.95rem;
+  color: #e6edf3;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.room-time {
+  color: #8b949e;
+  font-size: 0.8rem;
+}
+
+.item-join-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item-join-btn:hover:not(:disabled) {
+  background: #2ed573;
+  border-color: #2ed573;
+  color: white;
+}
+
+.error-message {
+  margin-top: 1rem;
+  color: #ff4757;
+  font-size: 0.9rem;
+  background: rgba(255, 71, 87, 0.1);
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lobby-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .lobby-actions-panel {
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 2rem;
+  }
+
+  .lobby-container {
+    padding: 1.5rem;
+  }
 }
 </style>

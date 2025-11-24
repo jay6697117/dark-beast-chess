@@ -188,6 +188,17 @@ export function useGameLogic() {
           if (payload.gameState) syncGameState(payload.gameState);
       });
 
+      client.on('ROOM_CLOSED', () => {
+          isOnline.value = false;
+          roomId.value = null;
+          sessionId.value = null;
+          mySeatIndex.value = null;
+          myColor.value = null;
+          playersReady.value = false;
+          game.addMessage('房主已退出，房间已解散', 'error');
+          startRoomPolling();
+      });
+
       client.on('STATE_UPDATE', (_type, payload) => {
           if (payload.lastAction) {
               const { action, payload: actionPayload, result } = payload.lastAction;
@@ -228,6 +239,10 @@ export function useGameLogic() {
       client.on('DISCONNECTED', () => {
           isOnline.value = false;
           playersReady.value = false;
+          roomId.value = null;
+          sessionId.value = null;
+          mySeatIndex.value = null;
+          myColor.value = null;
           game.addMessage('与服务器断开连接', 'error');
           startRoomPolling();
       });

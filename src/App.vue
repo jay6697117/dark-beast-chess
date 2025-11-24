@@ -107,7 +107,7 @@ const victoryMessage = computed(() => {
                 id="startBtn"
                 @click="initGame"
                 :disabled="isOnline ? (gameStarted || !isCreator || !playersReady) : status !== 'SETUP'">
-          {{ isOnline ? (gameStarted ? '游戏进行中' : (playersReady ? (isCreator ? '开始游戏' : '等待房主开始') : '等待玩家加入')) : (status === 'SETUP' ? '开始游戏' : '重新开始') }}
+          {{ isOnline ? (gameStarted ? '游戏进行中' : (playersReady ? (isCreator ? '开始游戏' : '等待房主开始') : '等待玩家加入')) : (status === 'SETUP' ? '单机开始' : '单机重开') }}
         </button>
       </section>
     </aside>

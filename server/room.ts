@@ -149,12 +149,16 @@ export class RoomManager {
       const seatIndex = room.seats.indexOf(sessionId);
       if (seatIndex === -1) return { removed: false, deleted: false };
 
+      // 房主（seat 0）离开则直接解散房间
+      const isCreator = seatIndex === 0;
+
       room.seats[seatIndex] = null;
       delete room.playerColors[sessionId];
       room.lastUpdated = Date.now();
 
+      // 房主离开或房间无人时删除房间
       const occupied = room.seats.filter(Boolean).length;
-      if (occupied === 0) {
+      if (isCreator || occupied === 0) {
           await kv.delete(['rooms', roomId]);
           return { removed: true, deleted: true };
       }
