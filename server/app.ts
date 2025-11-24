@@ -169,11 +169,20 @@ export function createApp() {
     ws.onclose = () => {
       console.log(`Client disconnected: ${sessionId}`);
       if (currentRoomId) {
-        const conns = activeConnections.get(currentRoomId);
-        if (conns) {
-          conns.delete(ws);
-          if (conns.size === 0) activeConnections.delete(currentRoomId);
-        }
+        roomManager.leaveRoom(currentRoomId, sessionId).then(({ deleted }) => {
+          // 清理连接集合
+          const conns = activeConnections.get(currentRoomId!);
+          if (conns) {
+            conns.delete(ws);
+            if (conns.size === 0) activeConnections.delete(currentRoomId!);
+          }
+
+          // 如果房间被删除，则通知其他人断开
+          if (deleted) {
+            broadcastToRoom(currentRoomId!, { type: 'ROOM_CLOSED' });
+            activeConnections.delete(currentRoomId!);
+          }
+        });
       }
     };
 

@@ -141,6 +141,29 @@ export class RoomManager {
       await kv.set(['rooms', room.id], room);
   }
 
+  async leaveRoom(roomId: string, sessionId: string): Promise<{ removed: boolean; deleted: boolean }> {
+      const roomRes = await kv.get<Room>(['rooms', roomId]);
+      const room = roomRes.value;
+      if (!room) return { removed: false, deleted: false };
+
+      const seatIndex = room.seats.indexOf(sessionId);
+      if (seatIndex === -1) return { removed: false, deleted: false };
+
+      room.seats[seatIndex] = null;
+      delete room.playerColors[sessionId];
+      room.lastUpdated = Date.now();
+
+      const occupied = room.seats.filter(Boolean).length;
+      if (occupied === 0) {
+          await kv.delete(['rooms', roomId]);
+          return { removed: true, deleted: true };
+      }
+
+      room.status = 'WAITING';
+      await kv.set(['rooms', roomId], room);
+      return { removed: true, deleted: false };
+  }
+
   async listRooms(): Promise<Array<{ id: string; status: Room['status']; seats: number; createdAt: number }>> {
       const rooms: Array<{ id: string; status: Room['status']; seats: number; createdAt: number }> = [];
       const iter = kv.list<Room>({ prefix: ['rooms'] });
