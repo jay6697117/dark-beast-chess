@@ -44,6 +44,8 @@ const turnText = computed(() => {
   return `等待${currentPlayer.value === 'red' ? '红方' : '蓝方'}操作`;
 });
 
+const turnTextChars = computed(() => turnText.value.split(''));
+
 const phaseText = computed(() => {
   switch (status.value) {
     case 'SETUP': return '游戏准备中';
@@ -113,12 +115,23 @@ const victoryMessage = computed(() => {
              role="status"
          aria-live="polite"
          aria-label="当前玩家信息">
-      <div class="player-indicator" :class="currentPlayer" aria-hidden="true"></div>
+      <div class="turn-visual" :class="[{ 'is-your-turn': isMyTurn, 'is-opponent-turn': currentPlayer && !isMyTurn }]" aria-hidden="true">
+        <div class="star-orbit">
+          <span v-for="n in 10" :key="n" class="star-particle" :style="{ '--i': n }"></span>
+        </div>
+        <div class="turn-core" :class="currentPlayer"></div>
+      </div>
       <span
         id="playerText"
         class="turn-text"
         :class="[{ 'is-your-turn': isMyTurn, 'is-opponent-turn': currentPlayer && !isMyTurn }]">
-        {{ turnText }}
+        <span
+          v-for="(char, index) in turnTextChars"
+          :key="index"
+          class="wave-char"
+          :style="{ '--char-index': index }">
+          {{ char === ' ' ? '\u00A0' : char }}
+        </span>
       </span>
     </div>
 
