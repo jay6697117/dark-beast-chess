@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "npm:@vitejs/plugin-vue@^5.1.4": "5.2.4_vite@5.4.21_vue@3.5.25__typescript@5.6.3_typescript@5.6.3",
+    "npm:hono@^3.11.7": "3.12.12",
     "npm:typescript@~5.6.2": "5.6.3",
     "npm:vite@^5.4.10": "5.4.21",
     "npm:vue-tsc@^2.1.8": "2.2.12_typescript@5.6.3",
@@ -517,6 +518,10 @@
       "bin": true,
       "tarball": "https://registry.npmmirror.com/he/-/he-1.2.0.tgz"
     },
+    "hono@3.12.12": {
+      "integrity": "sha512-5IAMJOXfpA5nT+K0MNjClchzz0IhBHs2Szl7WFAhrFOsbtQsYmNynFyJRg/a3IPsmCfxcrf8txUGiNShXpK5Rg==",
+      "tarball": "https://registry.npmmirror.com/hono/-/hono-3.12.12.tgz"
+    },
     "magic-string@0.30.21": {
       "integrity": "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==",
       "dependencies": [
@@ -643,6 +648,9 @@
     }
   },
   "workspace": {
+    "dependencies": [
+      "npm:hono@^3.11.7"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@vitejs/plugin-vue@^5.1.4",
