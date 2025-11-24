@@ -20,7 +20,7 @@ export function createApp() {
       console.log(`Client connected: ${sessionId}`);
     };
 
-    ws.onmessage = async (event) => {
+    ws.onmessage = async (event: MessageEvent) => {
       try {
         const msg = JSON.parse(event.data as string);
 
