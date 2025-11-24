@@ -5,13 +5,10 @@ import BoardCell from './components/BoardCell.vue';
 import Lobby from './components/Lobby.vue';
 
 const {
-  game,
   board,
-  turn,
   currentPlayer,
   status,
   selectedCellId,
-  messages,
   redPiecesCount,
   bluePiecesCount,
   initGame,
@@ -25,7 +22,9 @@ const {
   joinRoom,
   isCreator,
   playersReady,
-  myColor
+  myColor,
+  turn,
+  messages
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -142,8 +141,8 @@ const victoryMessage = computed(() => {
 
       <!-- 底部消息区域 -->
       <div class="game-messages" role="log" aria-live="polite">
-        <div class="message-list">
-          <div v-for="(msg, index) in game.messages.slice(-3)" :key="index" :class="['message-item', msg.type]">
+          <div class="message-list">
+          <div v-for="(msg, index) in messages.slice(0, 3)" :key="index" :class="['message-item', msg.type]">
             <span class="bullet">•</span> {{ msg.text }}
           </div>
         </div>
@@ -168,7 +167,7 @@ const victoryMessage = computed(() => {
           </div>
           <div class="stat-item">
             <span class="stat-label">回合数:</span>
-            <span class="stat-value">{{ game.turn }}</span>
+            <span class="stat-value">{{ turn }}</span>
           </div>
         </div>
       </section>
