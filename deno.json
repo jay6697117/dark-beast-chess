@@ -4,8 +4,8 @@
     "dev": "deno run --watch --allow-net --allow-read --allow-env --unstable-kv server/main.ts"
   },
   "imports": {
-    "hono": "https://deno.land/x/hono@v3.11.7/mod.ts",
-    "hono/deno": "https://deno.land/x/hono@v3.11.7/adapter/deno/mod.ts",
+    "hono": "npm:hono@^3.11.7",
+    "hono/deno": "npm:hono@^3.11.7/deno",
     "std/": "https://deno.land/std@0.208.0/"
   },
   "compilerOptions": {

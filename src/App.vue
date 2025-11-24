@@ -5,17 +5,12 @@ import BoardCell from './components/BoardCell.vue';
 import Lobby from './components/Lobby.vue';
 
 const {
-  board,
-  turn,
   currentPlayer,
   status,
-  selectedCellId,
-  messages,
   redPiecesCount,
   bluePiecesCount,
   initGame,
   handleCellClick,
-  resetGame,
   gameStarted,
   startLocalGame,
   isOnline,
@@ -46,8 +41,6 @@ const phaseClass = computed(() => {
   }
 });
 
-
-
 const boardClass = computed(() => {
   if (status.value === 'PLAYING' && currentPlayer.value) {
     return `turn-${currentPlayer.value}`;
@@ -57,11 +50,6 @@ const boardClass = computed(() => {
 
 const showVictoryModal = computed(() => status.value === 'GAME_OVER');
 const victoryMessage = computed(() => {
-  // We can infer winner from messages or state, but let's just use generic message or check last message
-  // Or better, check who has 0 pieces? No, could be stalemate.
-  // Let's just say "Game Over" or check the last important message.
-  // Actually, let's just show "Game Over" and the winner is usually in the message log.
-  // But to be precise, we can check pieces count if one is 0.
   if (redPiecesCount.value === 0) return '恭喜蓝方获胜！';
   if (bluePiecesCount.value === 0) return '恭喜红方获胜！';
   return '游戏结束！';
@@ -124,7 +112,7 @@ const victoryMessage = computed(() => {
          </div>
       </div>
 
-      <div class="game-board-container" :class="{ 'blur-bg': !isOnline && !gameStarted }">
+      <div class="game-board-container" :class="[{ 'blur-bg': !isOnline && !gameStarted }, boardClass]">
         <div class="board-grid" role="grid" aria-label="游戏棋盘">
           <div
             v-for="(row, rowIndex) in game.board"
@@ -174,9 +162,19 @@ const victoryMessage = computed(() => {
           </div>
           <div class="stat-item">
             <span class="stat-label">回合数:</span>
-          </button>
-          <!-- Close button just hides modal visually but state is still game over -->
-          <!-- We can implement a close method if needed, but reset is better -->
+            <span class="stat-value">{{ game.turn }}</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- 胜利结算弹窗 -->
+    <div v-if="showVictoryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+      <div class="modal-content victory-modal">
+        <h2 id="victory-title" class="victory-title">游戏结束</h2>
+        <p class="victory-message">{{ victoryMessage }}</p>
+        <div class="modal-actions">
+          <button class="btn btn-primary" @click="initGame">再来一局</button>
         </div>
       </div>
     </div>
@@ -185,4 +183,42 @@ const victoryMessage = computed(() => {
 
 <style>
 /* Global styles are imported in main.ts from style.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+  width: 400px;
+}
+
+.victory-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.victory-message {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
 </style>
