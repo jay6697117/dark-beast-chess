@@ -127,7 +127,6 @@ export function useGameLogic() {
   };
 
   // Network handlers - Registered once
-  if (client.handlers.size === 0) {
       client.on('ROOM_CREATED', (_type, payload) => {
           isOnline.value = true;
           roomId.value = payload.roomId;
@@ -203,7 +202,6 @@ export function useGameLogic() {
           isOnline.value = false;
           game.addMessage('与服务器断开连接', 'error');
       });
-  }
 
   const connectToServer = async () => {
       isConnecting.value = true;
