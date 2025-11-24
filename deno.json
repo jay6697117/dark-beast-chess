@@ -5,11 +5,9 @@
   },
   "imports": {
     "hono": "npm:hono@^3.11.7",
-    "hono/deno": "npm:hono@^3.11.7/deno",
     "std/": "https://deno.land/std@0.208.0/"
   },
   "compilerOptions": {
     "lib": ["deno.window", "deno.ns", "dom"]
-  },
-  "nodeModulesDir": "auto"
+  }
 }

@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useGameLogic } from './composables/useGameLogic';
+
+onMounted(() => {
+  console.log('App mounted');
+});
 import BoardCell from './components/BoardCell.vue';
 import Lobby from './components/Lobby.vue';
 
