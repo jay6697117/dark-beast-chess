@@ -111,7 +111,13 @@ export function useGameLogic() {
   const handleCellClick = (row: number, col: number) => {
     if (isOnline.value) {
         if (game.phase === 'SETUP') {
-            showToast('房主请开始游戏', 'info');
+            if (playersReady.value) {
+                // 两人已就位但房主未开局
+                showToast(isCreator.value ? '房主请开始游戏' : '等待房主开始游戏', 'info');
+            } else {
+                // 仅一人时提示等待对手
+                showToast('等待对手加入', 'info');
+            }
             return;
         }
         const piece = game.board[row][col];
