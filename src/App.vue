@@ -67,7 +67,7 @@ const victoryMessage = computed(() => {
     <!-- 左侧控制面板 -->
     <aside class="game-sidebar-left" role="complementary" aria-label="游戏控制面板">
       <header class="game-header">
-        <h1 class="game-title" id="game-title">暗兽棋</h1>
+        <h1 class="game-title" id="game-title">暗兽棋1</h1>
         <p class="game-subtitle">Dark Beast Chess</p>
       </header>
 
