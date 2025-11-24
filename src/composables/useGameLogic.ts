@@ -216,19 +216,27 @@ export function useGameLogic() {
       connectionError.value = undefined;
       try {
           await client.connect();
+          return true;
       } catch (_e) {
-          connectionError.value = '连接服务器失败';
+          connectionError.value = '连接服务器失败，请检查后端是否启动';
+          return false;
       } finally {
           isConnecting.value = false;
       }
   };
 
-  const createRoom = () => {
-      connectToServer().then(() => client.createRoom());
+  const createRoom = async () => {
+      const ok = await connectToServer();
+      if (ok) {
+          client.createRoom();
+      }
   };
 
-  const joinRoom = (id: string) => {
-      connectToServer().then(() => client.joinRoom(id));
+  const joinRoom = async (id: string) => {
+      const ok = await connectToServer();
+      if (ok) {
+          client.joinRoom(id);
+      }
   };
 
   const syncGameState = (state: any) => {

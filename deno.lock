@@ -733,6 +733,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@vitejs/plugin-vue@^5.1.4",
+        "npm:hono@^4.10.6",
         "npm:typescript@~5.6.2",
         "npm:vite@^5.4.10",
         "npm:vue-tsc@^2.1.8",

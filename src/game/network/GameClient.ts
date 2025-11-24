@@ -1,14 +1,26 @@
 
-
 type MessageHandler = (type: string, payload: any) => void;
 
-const defaultWsUrl = (() => {
+const resolveWsUrl = () => {
+    // 优先允许通过环境变量显式指定
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_WS_URL) {
+        // @ts-ignore
+        return import.meta.env.VITE_WS_URL as string;
+    }
+
     if (typeof location !== 'undefined') {
+        // Vite 开发常用 5173/4173 端口，后端默认 8000
+        if (location.port === '5173' || location.port === '4173') {
+            return 'ws://localhost:8000/ws';
+        }
+
         const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
         return `${protocol}//${location.host}/ws`;
     }
+
     return 'ws://localhost:8000/ws';
-})();
+};
 
 export class GameClient {
     ws: WebSocket | null = null;
@@ -16,16 +28,31 @@ export class GameClient {
     sessionId: string | null = null;
     roomId: string | null = null;
 
-    connect(url: string = defaultWsUrl): Promise<void> {
+    connect(url: string = resolveWsUrl()): Promise<void> {
         return new Promise((resolve, reject) => {
             this.ws = new WebSocket(url);
 
+            let timeout: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+                console.error('WebSocket 连接超时');
+                this.ws?.close();
+                reject(new Error('WebSocket 连接超时'));
+            }, 5000);
+
+            const clearTimers = () => {
+                if (timeout !== null) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+            };
+
             this.ws.onopen = () => {
+                clearTimers();
                 console.log('Connected to game server');
                 resolve();
             };
 
             this.ws.onerror = (err) => {
+                clearTimers();
                 console.error('WebSocket error:', err);
                 reject(err);
             };
@@ -40,6 +67,7 @@ export class GameClient {
             };
 
             this.ws.onclose = () => {
+                clearTimers();
                 console.log('Disconnected from server');
                 this.emit('DISCONNECTED', null);
             };
