@@ -86,6 +86,10 @@ export class GameClient {
         this.send('JOIN_ROOM', { roomId });
     }
 
+    startGame() {
+        this.send('START_GAME', {});
+    }
+
     sendAction(action: 'FLIP' | 'MOVE', payload: any) {
         this.send('ACTION', { action, payload });
     }

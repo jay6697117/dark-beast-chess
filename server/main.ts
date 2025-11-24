@@ -54,26 +54,40 @@ app.get('/ws', (c) => {
               }));
 
               // Broadcast to others that someone joined
-              broadcastToRoom(roomId, { type: 'PLAYER_JOINED', count: room?.seats.filter(s => s).length });
+              const playerCount = room?.seats.filter(s => s).length;
+              broadcastToRoom(roomId, { type: 'PLAYER_JOINED', count: playerCount });
 
-              // Refetch room to get updated status
-              const updatedRoom = await roomManager.getRoom(roomId);
-              if (updatedRoom?.status === 'PLAYING') {
-                   // Start the game engine
-                   const engine = roomManager.hydrateEngine(updatedRoom.gameState);
-                   if (engine.phase === 'SETUP') {
-                       engine.startGame();
-                       await roomManager.updateRoomState(roomId, engine);
+              // If room is full, notify that players are ready (but don't start game yet)
+              if (playerCount === 2) {
+                  broadcastToRoom(roomId, { type: 'PLAYERS_READY' });
+              }
 
-                       // Get the latest room state again after update
-                       const startedRoom = await roomManager.getRoom(roomId);
-                       broadcastToRoom(roomId, { type: 'GAME_START', gameState: startedRoom?.gameState });
-                   } else {
-                       broadcastToRoom(roomId, { type: 'GAME_START', gameState: updatedRoom.gameState });
-                   }
+              // If joining a game already in progress
+              if (room?.status === 'PLAYING') {
+                   broadcastToRoom(roomId, { type: 'GAME_START', gameState: room.gameState });
               }
           } else {
               ws.send(JSON.stringify({ type: 'ERROR', message: result.error }));
+          }
+      }
+      else if (msg.type === 'START_GAME') {
+          if (!currentRoomId) return;
+          const room = await roomManager.getRoom(currentRoomId);
+          if (!room) return;
+
+          // Only creator (seat 0) can start
+          if (room.seats[0] !== sessionId) {
+              ws.send(JSON.stringify({ type: 'ERROR', message: '只有房主可以开始游戏' }));
+              return;
+          }
+
+          const engine = roomManager.hydrateEngine(room.gameState);
+          if (engine.phase === 'SETUP') {
+              engine.startGame();
+              await roomManager.updateRoomState(currentRoomId, engine);
+
+              const startedRoom = await roomManager.getRoom(currentRoomId);
+              broadcastToRoom(currentRoomId, { type: 'GAME_START', gameState: startedRoom?.gameState });
           }
       }
       else if (msg.type === 'ACTION') {
@@ -90,7 +104,13 @@ app.get('/ws', (c) => {
           // Check turn
           let isTurn = false;
           if (engine.phase === 'COLOR_SELECTION') {
-              isTurn = true; // Anyone can start
+              // Only creator (seat 0) can start the first move
+              if (room.seats[0] === sessionId) {
+                  isTurn = true;
+              } else {
+                  ws.send(JSON.stringify({ type: 'ERROR', message: '等待房主先手翻牌' }));
+                  return;
+              }
           } else {
               const myColor = room.playerColors[sessionId];
               if (myColor && engine.currentPlayer === myColor) {
@@ -99,7 +119,7 @@ app.get('/ws', (c) => {
           }
 
           if (!isTurn) {
-              ws.send(JSON.stringify({ type: 'ERROR', message: 'Not your turn' }));
+              ws.send(JSON.stringify({ type: 'ERROR', message: '不是你的回合' }));
               return;
           }
 
@@ -127,7 +147,7 @@ app.get('/ws', (c) => {
                   lastAction: { action, payload, result }
               });
           } else {
-              ws.send(JSON.stringify({ type: 'ERROR', message: 'Invalid move' }));
+              ws.send(JSON.stringify({ type: 'ERROR', message: '无效操作' }));
           }
       }
     } catch (e) {

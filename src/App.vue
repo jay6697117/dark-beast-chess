@@ -22,7 +22,10 @@ const {
   isConnecting,
   connectionError,
   createRoom,
-  joinRoom
+  joinRoom,
+  isCreator,
+  playersReady,
+  myColor
 } = useGameLogic();
 
 const phaseText = computed(() => {
@@ -91,6 +94,10 @@ const victoryMessage = computed(() => {
             {{ currentPlayer ? `当前玩家：${currentPlayer === 'red' ? '红' : '蓝'}方` : '点击开始游戏' }}
           </span>
         </div>
+
+        <div v-if="isOnline && myColor" class="my-color-info" :class="myColor">
+            您是：{{ myColor === 'red' ? '红方' : '蓝方' }}
+        </div>
       </section>
 
       <section class="game-controls" aria-labelledby="controls-heading">
@@ -98,8 +105,8 @@ const victoryMessage = computed(() => {
         <button class="btn btn-primary"
                 id="startBtn"
                 @click="initGame"
-                :disabled="status !== 'SETUP'">
-          {{ status === 'SETUP' ? '开始游戏' : '重新开始' }}
+                :disabled="isOnline ? (gameStarted || !isCreator || !playersReady) : status !== 'SETUP'">
+          {{ isOnline ? (gameStarted ? '游戏进行中' : (playersReady ? (isCreator ? '开始游戏' : '等待房主开始') : '等待玩家加入')) : (status === 'SETUP' ? '开始游戏' : '重新开始') }}
         </button>
       </section>
     </aside>
@@ -219,5 +226,26 @@ const victoryMessage = computed(() => {
   font-size: 1.2rem;
   margin-bottom: 2rem;
   color: var(--text-primary);
+}
+
+.my-color-info {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.my-color-info.red {
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+}
+
+.my-color-info.blue {
+    background-color: rgba(0, 0, 255, 0.2);
+    color: #4d4dff;
+    border: 1px solid #4d4dff;
 }
 </style>
