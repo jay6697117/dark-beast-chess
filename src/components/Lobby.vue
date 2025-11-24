@@ -148,11 +148,12 @@ const formatTime = (timestamp: number) => {
 /* Top Panel: Actions */
 .lobby-actions-panel {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 1.5rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  border-right: none; /* Remove previous border */
-  padding-right: 0; /* Remove previous padding */
+  border-right: none;
+  padding-right: 0;
 }
 
 .action-group {
@@ -182,22 +183,24 @@ const formatTime = (timestamp: number) => {
   color: #484f58;
   font-size: 0.8rem;
   font-weight: bold;
-  margin: 0;
-  flex-direction: column;
+  margin: 0.5rem 0;
+  flex-direction: row;
   justify-content: center;
+  width: 100%;
 }
 
 .divider::before,
 .divider::after {
   content: '';
-  height: 40px;
-  width: 1px;
+  flex: 1;
+  height: 1px;
+  width: auto;
   background: rgba(255, 255, 255, 0.05);
   border-bottom: none;
 }
 
 .divider span {
-  padding: 10px 0;
+  padding: 0 10px;
 }
 
 .join-input-wrapper {
