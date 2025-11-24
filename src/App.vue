@@ -25,7 +25,7 @@ const {
   turn,
   messages,
   roomList,
-  fetchRooms
+  fetchRooms,
   toast
 } = useGameLogic();
 

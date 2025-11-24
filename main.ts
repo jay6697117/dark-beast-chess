@@ -8,8 +8,8 @@ const distDir = "dist";
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
-  // WebSocket 升级交给 Hono 应用处理
-  if (url.pathname === "/ws") {
+  // API 路由交给 Hono 处理，其余走静态资源
+  if (url.pathname === "/ws" || url.pathname === "/rooms") {
     return app.fetch(req);
   }
 
