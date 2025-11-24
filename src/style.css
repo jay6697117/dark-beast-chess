@@ -139,7 +139,7 @@ body {
 .game-container {
     --container-padding: clamp(var(--space-sm), 2.2vw, var(--space-lg));
     display: grid;
-    grid-template-columns: clamp(280px, 22vw, 440px) minmax(0, 1fr) clamp(280px, 22vw, 440px);
+    grid-template-columns: clamp(240px, 18vw, 320px) minmax(0, 1fr) clamp(240px, 18vw, 320px);
     grid-template-areas: "sidebar-left main sidebar-right";
     gap: clamp(var(--space-xs), 1vw, var(--space-sm));
     max-width: 1980px;
@@ -723,12 +723,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: clamp(var(--space-sm), 1.6vw, var(--space-lg));
-    padding: clamp(var(--space-sm), 2vw, var(--space-lg));
+    padding: 0;
     min-height: 100%;
     width: 100%;
-    max-width: min(1080px, 100%);
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
     margin: 0 auto;
 }
 
@@ -742,8 +744,14 @@ body {
     border-radius: var(--radius-lg);
     padding: clamp(var(--space-md), 1.6vw, var(--space-lg));
     box-shadow: var(--elevation-4);
-    width: min(100%, clamp(440px, 42vw, 700px));
-    height: clamp(440px, 42vw, 700px);
+
+    /* Maximize Board Size & Center */
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 85vh;
+    aspect-ratio: 1 / 1;
+    margin: auto;
     position: relative;
     overflow: hidden;
     transition: all 0.4s var(--ease-emphasized);
@@ -753,25 +761,35 @@ body {
 .game-board.turn-red {
     border: 3px solid var(--red-beast-primary);
     box-shadow:
-        var(--elevation-4),
-        0 0 20px rgba(255, 71, 87, 0.3),
-        0 0 40px rgba(255, 71, 87, 0.15),
-        inset 0 0 0 1px rgba(255, 71, 87, 0.2);
-    background: radial-gradient(ellipse at center,
-        rgba(255, 71, 87, 0.03) 0%,
-        var(--game-board-bg) 70%);
+        0 0 30px rgba(255, 71, 87, 0.4),
+        0 0 60px rgba(255, 71, 87, 0.2),
+        inset 0 0 20px rgba(255, 71, 87, 0.1);
+    background: radial-gradient(circle at center,
+        rgba(255, 71, 87, 0.05) 0%,
+        var(--game-board-bg) 80%);
+    animation: board-pulse-red 2s infinite alternate;
 }
 
 .game-board.turn-blue {
     border: 3px solid var(--blue-beast-primary);
     box-shadow:
-        var(--elevation-4),
-        0 0 20px rgba(83, 82, 237, 0.3),
-        0 0 40px rgba(83, 82, 237, 0.15),
-        inset 0 0 0 1px rgba(83, 82, 237, 0.2);
-    background: radial-gradient(ellipse at center,
-        rgba(83, 82, 237, 0.03) 0%,
-        var(--game-board-bg) 70%);
+        0 0 30px rgba(83, 82, 237, 0.4),
+        0 0 60px rgba(83, 82, 237, 0.2),
+        inset 0 0 20px rgba(83, 82, 237, 0.1);
+    background: radial-gradient(circle at center,
+        rgba(83, 82, 237, 0.05) 0%,
+        var(--game-board-bg) 80%);
+    animation: board-pulse-blue 2s infinite alternate;
+}
+
+@keyframes board-pulse-red {
+    from { box-shadow: 0 0 20px rgba(255, 71, 87, 0.3), 0 0 40px rgba(255, 71, 87, 0.1); }
+    to { box-shadow: 0 0 40px rgba(255, 71, 87, 0.6), 0 0 80px rgba(255, 71, 87, 0.3); }
+}
+
+@keyframes board-pulse-blue {
+    from { box-shadow: 0 0 20px rgba(83, 82, 237, 0.3), 0 0 40px rgba(83, 82, 237, 0.1); }
+    to { box-shadow: 0 0 40px rgba(83, 82, 237, 0.6), 0 0 80px rgba(83, 82, 237, 0.3); }
 }
 
 /* 回合指示边框动画效果 */
