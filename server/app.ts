@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 
 import { RoomManager } from './room.ts';
 
+declare const Deno: any;
+
 export function createApp() {
   const app = new Hono();
   const roomManager = new RoomManager();
