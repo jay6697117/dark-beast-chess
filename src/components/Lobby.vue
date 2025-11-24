@@ -112,6 +112,7 @@ const formatTime = (timestamp: number) => {
   text-align: left;
   flex: 1;
   height: 100%;
+  min-height: 0;
 }
 
 /* Top Panel: Actions */
