@@ -2,6 +2,7 @@
 type MessageHandler = (type: string, payload: any) => void;
 
 const resolveWsUrl = () => {
+  console.log('import.meta.env.VITE_WS_URL:', import.meta.env.VITE_WS_URL);
     // 优先允许通过环境变量显式指定
     // @ts-ignore
     if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_WS_URL) {
