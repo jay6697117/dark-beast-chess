@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/middleware/cors';
 
 import { RoomManager } from './room.ts';
 
@@ -12,6 +13,9 @@ export function createApp() {
   const activeConnections = new Map<string, Set<WebSocket>>();
 
   app.get('/', (c) => c.text('Dark Beast Chess Server is Running!'));
+
+  // 允许前端开发环境跨域访问房间列表
+  app.use('*', cors());
 
   app.get('/rooms', async (c) => {
     const rooms = await roomManager.listRooms();

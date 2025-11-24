@@ -17,6 +17,21 @@ const playersReady = ref(false);
 const roomList = ref<Array<{ id: string; status: string; seats: number; createdAt: number }>>([]);
 let roomListPoller: ReturnType<typeof setInterval> | null = null;
 
+const apiBase = (() => {
+  // @ts-ignore
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
+    // @ts-ignore
+    return import.meta.env.VITE_API_URL as string;
+  }
+  if (typeof location !== 'undefined') {
+    if (location.port === '5173' || location.port === '4173') {
+      return 'http://localhost:8000';
+    }
+    return `${location.protocol}//${location.host}`;
+  }
+  return 'http://localhost:8000';
+})();
+
 export function useGameLogic() {
   const board = computed(() => {
     const cells = [];
@@ -220,7 +235,7 @@ export function useGameLogic() {
 
   const fetchRooms = async () => {
       try {
-          const res = await fetch('/rooms');
+          const res = await fetch(`${apiBase}/rooms`, { mode: 'cors' });
           if (!res.ok) return;
           const data = await res.json();
           roomList.value = data.rooms ?? [];
