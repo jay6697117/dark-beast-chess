@@ -23,6 +23,7 @@ export interface Room {
 }
 
 const kv = await Deno.openKv();
+const ROOM_TTL_MS = 5 * 60 * 1000; // 5分钟未更新则清理房间，防止幽灵房间
 
 export class RoomManager {
   // In-memory cache for active rooms (since we have sticky WS connections usually)
@@ -79,6 +80,7 @@ export class RoomManager {
         if (room.seats.every(s => s !== null)) {
             room.status = 'PLAYING'; // Ready to start (or at least full)
         }
+        room.lastUpdated = Date.now();
 
         res = await kv.atomic()
             .check(roomRes)
@@ -164,16 +166,23 @@ export class RoomManager {
       }
 
       room.status = 'WAITING';
+      room.lastUpdated = Date.now();
       await kv.set(['rooms', roomId], room);
       return { removed: true, deleted: false };
   }
 
   async listRooms(): Promise<Array<{ id: string; status: Room['status']; seats: number; createdAt: number }>> {
       const rooms: Array<{ id: string; status: Room['status']; seats: number; createdAt: number }> = [];
+      const now = Date.now();
       const iter = kv.list<Room>({ prefix: ['rooms'] });
 
       for await (const entry of iter) {
           const r = entry.value;
+          // 清理长时间未更新的房间，避免幽灵房间
+          if (now - r.lastUpdated > ROOM_TTL_MS) {
+              await kv.delete(['rooms', r.id]);
+              continue;
+          }
           rooms.push({
               id: r.id,
               status: r.status,
