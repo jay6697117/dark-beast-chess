@@ -200,6 +200,11 @@ export function useGameLogic() {
           game.addMessage(`玩家加入，当前人数：${payload.count}`);
       });
 
+      client.on('PLAYER_LEFT', (_type, payload) => {
+          playersReady.value = false;
+          game.addMessage(`玩家离开，当前人数：${payload?.count ?? 0}`);
+      });
+
       client.on('PLAYERS_READY', () => {
           playersReady.value = true;
           game.addMessage('玩家已就绪，等待房主开始游戏...');

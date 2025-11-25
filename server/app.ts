@@ -270,7 +270,7 @@ export function createApp() {
         room.lastUpdated = Date.now();
         await roomManager.saveRoom(room);
         cacheRoomSnapshot(room);
-        broadcastToRoom(roomId, { type: 'PLAYER_JOINED', count: 1 });
+        broadcastToRoom(roomId, { type: 'PLAYER_LEFT', count: remainingCount });
         return;
       }
     }
@@ -328,6 +328,7 @@ export function createApp() {
 
     const seatsCount = room.seats.filter(Boolean).length;
     const snapshot = roomSnapshots.get(roomId);
+    const prevCount = snapshot?.seatsCount ?? 0;
 
     if (
       snapshot &&
@@ -341,7 +342,10 @@ export function createApp() {
 
     cacheRoomSnapshot(room);
 
-    broadcastToRoom(roomId, { type: 'PLAYER_JOINED', count: seatsCount });
+    if (seatsCount !== prevCount) {
+      const type = seatsCount > prevCount ? 'PLAYER_JOINED' : 'PLAYER_LEFT';
+      broadcastToRoom(roomId, { type, count: seatsCount });
+    }
     if (seatsCount === 2) {
       broadcastToRoom(roomId, { type: 'PLAYERS_READY' });
     }
