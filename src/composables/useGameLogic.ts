@@ -7,6 +7,7 @@ const client = new GameClient();
 
 // Online state
 const isOnline = ref(false);
+const inLocalRoom = ref(false);
 const roomId = ref<string | null>(null);
 const sessionId = ref<string | null>(null);
 const isConnecting = ref(false);
@@ -92,20 +93,19 @@ export function useGameLogic() {
       return;
     }
 
-    if (game.phase === 'SETUP') {
-      game.startGame();
-    } else if (game.phase === 'GAME_OVER') {
-      game.resetGame();
-    }
+    startLocalGame();
   };
 
   const startLocalGame = () => {
+    inLocalRoom.value = true;
     isOnline.value = false;
     playersReady.value = false;
     myColor.value = null;
     mySeatIndex.value = null;
     stopRoomPolling();
+    game.resetGame();
     game.startGame();
+    showToast('单机对局已开始', 'success');
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -156,6 +156,7 @@ export function useGameLogic() {
   const resetGame = () => {
     game.resetGame();
     isOnline.value = false;
+    inLocalRoom.value = false;
     roomId.value = null;
     sessionId.value = null;
     myColor.value = null;
@@ -212,6 +213,7 @@ export function useGameLogic() {
 
       client.on('ROOM_CLOSED', () => {
           isOnline.value = false;
+          inLocalRoom.value = false;
           roomId.value = null;
           sessionId.value = null;
           mySeatIndex.value = null;
@@ -285,7 +287,7 @@ export function useGameLogic() {
       if (roomListPoller !== null) return;
       fetchRooms();
       roomListPoller = setInterval(() => {
-          if (!isOnline.value && !gameStarted.value) {
+          if (!isOnline.value && !gameStarted.value && !inLocalRoom.value) {
               fetchRooms();
           }
       }, 3000);
@@ -334,6 +336,7 @@ export function useGameLogic() {
       if (!isOnline.value) return;
       client.disconnect();
       isOnline.value = false;
+      inLocalRoom.value = false;
       roomId.value = null;
       sessionId.value = null;
       myColor.value = null;
@@ -342,6 +345,17 @@ export function useGameLogic() {
       game.resetGame();
       startRoomPolling();
       showToast('已退出房间', 'info');
+  };
+
+  const exitLocalRoom = () => {
+      if (!inLocalRoom.value) return;
+      inLocalRoom.value = false;
+      game.resetGame();
+      myColor.value = null;
+      mySeatIndex.value = null;
+      playersReady.value = false;
+      startRoomPolling();
+      showToast('已退出单机房间', 'info');
   };
 
   const syncGameState = (state: any) => {
@@ -380,6 +394,7 @@ export function useGameLogic() {
     handleCellClick,
     resetGame,
     isOnline,
+    inLocalRoom,
     roomId,
     isConnecting,
     connectionError,
@@ -394,6 +409,7 @@ export function useGameLogic() {
     fetchRooms,
     toast,
     showToast,
-    leaveRoom
+    leaveRoom,
+    exitLocalRoom
   };
 }

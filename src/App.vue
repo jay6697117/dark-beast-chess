@@ -27,8 +27,18 @@ const {
   roomList,
   fetchRooms,
   toast,
-  leaveRoom
+  leaveRoom,
+  inLocalRoom,
+  exitLocalRoom
 } = useGameLogic();
+
+const exitRoom = () => {
+  if (isOnline.value) {
+    leaveRoom();
+  } else {
+    exitLocalRoom();
+  }
+};
 
 const isMyTurn = computed(() => {
   if (!currentPlayer.value) return false;
@@ -145,22 +155,22 @@ const victoryMessage = computed(() => {
         <button class="btn btn-primary"
                 id="startBtn"
                 @click="initGame"
-                :disabled="isOnline ? (gameStarted || !isCreator || !playersReady) : status !== 'SETUP'">
-          {{ isOnline ? (gameStarted ? '游戏进行中' : (playersReady ? (isCreator ? '开始游戏' : '等待房主开始') : '等待玩家加入')) : (status === 'SETUP' ? '单机开始' : '单机重开') }}
+                :disabled="isOnline ? (gameStarted || !isCreator || !playersReady) : false">
+          {{ isOnline ? (gameStarted ? '游戏进行中' : (playersReady ? (isCreator ? '开始游戏' : '等待房主开始') : '等待玩家加入')) : (inLocalRoom ? '单机重开' : '单机开始') }}
         </button>
         <button
-          v-if="isOnline"
+          v-if="isOnline || inLocalRoom"
           class="btn btn-secondary"
           type="button"
-          @click="leaveRoom">
-          退出房间
+          @click="exitRoom">
+          {{ isOnline ? '退出房间' : '退出单机房间' }}
         </button>
       </section>
     </aside>
 
     <main class="game-main" role="main" aria-label="游戏主区域">
       <!-- 联机大厅（未进入房间时独占显示） -->
-      <div v-if="!isOnline && !gameStarted" class="lobby-overlay">
+      <div v-if="!isOnline && !inLocalRoom" class="lobby-overlay">
          <Lobby
            :connecting="isConnecting"
            :error="connectionError"

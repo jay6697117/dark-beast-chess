@@ -65,7 +65,7 @@ defineProps<{
   rooms: { id: string; status: string; seats: number; createdAt: number }[];
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'create-room'): void;
   (e: 'join-room', roomId: string): void;
   (e: 'refresh-rooms'): void;
