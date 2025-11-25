@@ -77,9 +77,7 @@ export class RoomManager {
         }
 
         room.seats[emptyIndex] = sessionId;
-        if (room.seats.every(s => s !== null)) {
-            room.status = 'PLAYING'; // Ready to start (or at least full)
-        }
+        // 保持 WAITING，真正开局时由 updateRoomState 依据 phase 更新为 PLAYING
         room.lastUpdated = Date.now();
 
         res = await kv.atomic()
@@ -102,6 +100,9 @@ export class RoomManager {
 
       room.gameState = this.serializeEngine(engine);
       room.lastUpdated = Date.now();
+
+      // 根据引擎状态更新房间状态
+      room.status = engine.phase === 'SETUP' ? 'WAITING' : 'PLAYING';
 
       // Update player colors map based on engine state
       // engine.playerColors has { player1: Color, player2: Color }

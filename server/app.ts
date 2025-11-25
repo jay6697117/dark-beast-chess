@@ -87,7 +87,7 @@ export function createApp() {
             }
 
             // If joining a game already in progress
-            if (room?.status === 'PLAYING') {
+            if (room?.gameState.phase !== 'SETUP') {
               broadcastToRoom(roomId, { type: 'GAME_START', gameState: room.gameState });
             }
 
@@ -349,7 +349,7 @@ export function createApp() {
     if (seatsCount === 2) {
       broadcastToRoom(roomId, { type: 'PLAYERS_READY' });
     }
-    if (room.gameState.phase !== 'SETUP' || room.status === 'PLAYING') {
+    if (room.gameState.phase !== 'SETUP') {
       broadcastToRoom(roomId, { type: 'GAME_START', gameState: room.gameState });
     }
   }
