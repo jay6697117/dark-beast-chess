@@ -238,7 +238,7 @@ export function useGameLogic() {
                       setTimeout(() => {
                           piece.isFlipping = false;
                           syncGameState(payload.gameState);
-                      }, 400);
+                      }, 850); // 与 CSS 翻牌动画时长对齐
                       return;
                   }
               } else if (action === 'MOVE') {

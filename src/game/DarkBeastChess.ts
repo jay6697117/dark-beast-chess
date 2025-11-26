@@ -74,7 +74,7 @@ export class DarkBeastChess extends CoreEngine {
 
         piece.isFlipping = true;
 
-        // Delay logic to match animation
+        // Delay logic to匹配翻牌动画时长
         setTimeout(() => {
             piece.isFlipping = false;
 
@@ -82,7 +82,7 @@ export class DarkBeastChess extends CoreEngine {
             if (result.success && result.piece) {
                 this.addMessage(`翻开了${this.getAnimalName(result.piece.type)}(${this.getColorName(result.piece.color)})，您是${this.getColorName(result.piece.color)}方！`, 'important');
             }
-        }, 400);
+        }, 850);
     }
 
     handleFlip(row: number, col: number) {
@@ -109,7 +109,7 @@ export class DarkBeastChess extends CoreEngine {
                     this.addMessage(`翻开了对方${this.getAnimalName(result.piece.type)}`);
                 }
             }
-        }, 400);
+        }, 850);
     }
 
     selectPiece(row: number, col: number) {
