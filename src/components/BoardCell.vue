@@ -99,4 +99,20 @@ const pieceText = computed(() => {
 .piece.blue .piece-text-corner {
   color: #5352ed;
 }
+
+@media (max-width: 480px) {
+  .piece-text-corner {
+    font-size: 0.9rem;
+  }
+
+  .top-left {
+    top: 4px;
+    left: 4px;
+  }
+
+  .bottom-right {
+    bottom: 4px;
+    right: 4px;
+  }
+}
 </style>
