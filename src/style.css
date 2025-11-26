@@ -1414,14 +1414,67 @@ body {
 }
 
 /* 动物图标 - 适配扑克牌形状 */
-.piece-elephant::before { content: "🐘"; font-size: 3rem; }
-.piece-lion::before { content: "🦁"; font-size: 3rem; }
-.piece-tiger::before { content: "🐅"; font-size: 3rem; }
-.piece-leopard::before { content: "🐆"; font-size: 3rem; }
-.piece-wolf::before { content: "🐺"; font-size: 3rem; }
-.piece-dog::before { content: "🐕"; font-size: 3rem; }
-.piece-cat::before { content: "🐱"; font-size: 3rem; }
-.piece-mouse::before { content: "🐭"; font-size: 3rem; }
+.piece-elephant::before { content: "🐘"; font-size: 3.2rem; }
+.piece-lion::before { content: "🦁"; font-size: 3.2rem; }
+.piece-tiger::before { content: "🐅"; font-size: 3.2rem; }
+.piece-leopard::before { content: "🐆"; font-size: 3.2rem; }
+.piece-wolf::before { content: "🐺"; font-size: 3.2rem; }
+.piece-dog::before { content: "🐕"; font-size: 3.2rem; }
+.piece-cat::before { content: "🐱"; font-size: 3.2rem; }
+.piece-mouse::before { content: "🐭"; font-size: 3.2rem; }
+
+/* 屏幕尺寸自适应的动物图标大小 */
+@media (min-width: 1440px) {
+    .piece-elephant::before,
+    .piece-lion::before,
+    .piece-tiger::before,
+    .piece-leopard::before,
+    .piece-wolf::before,
+    .piece-dog::before,
+    .piece-cat::before,
+    .piece-mouse::before {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+    .piece-elephant::before,
+    .piece-lion::before,
+    .piece-tiger::before,
+    .piece-leopard::before,
+    .piece-wolf::before,
+    .piece-dog::before,
+    .piece-cat::before,
+    .piece-mouse::before {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 767px) and (min-width: 481px) {
+    .piece-elephant::before,
+    .piece-lion::before,
+    .piece-tiger::before,
+    .piece-leopard::before,
+    .piece-wolf::before,
+    .piece-dog::before,
+    .piece-cat::before,
+    .piece-mouse::before {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .piece-elephant::before,
+    .piece-lion::before,
+    .piece-tiger::before,
+    .piece-leopard::before,
+    .piece-wolf::before,
+    .piece-dog::before,
+    .piece-cat::before,
+    .piece-mouse::before {
+        font-size: 2.6rem;
+    }
+}
 
 /* 棋子等级指示器 */
 .piece[data-rank="8"]::after { border-color: var(--accent-gold); }
