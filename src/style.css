@@ -1317,6 +1317,7 @@ body {
     inset: 0;
     display: grid;
     place-items: center;
+    /* 默认移动端字号 */
     font-size: 0.88em;
     color: rgba(187, 134, 252, 0.9);
     text-shadow:
@@ -1327,6 +1328,27 @@ body {
     z-index: 1;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     line-height: 1;
+}
+
+/* 桌面端放大面具字号 */
+@media (min-width: 768px) {
+    .piece.hidden::after {
+        font-size: 1.2em;
+    }
+}
+
+/* 桌面端放大面具字号 */
+@media (min-width: 1024px) {
+    .piece.hidden::after {
+        font-size: 1.4em;
+    }
+}
+
+/* 超大屏进一步放大 */
+@media (min-width: 1440px) {
+    .piece.hidden::after {
+        font-size: 1.8em;
+    }
 }
 
 /* 鼠标悬停时的神秘效果 - 扑克牌风格 */
