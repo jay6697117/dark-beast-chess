@@ -1247,19 +1247,27 @@ body {
 }
 
 .piece::after {
-    content: '';
+    content: '🎭';
     position: absolute;
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05), transparent 60%),
-        linear-gradient(135deg, #161a24 0%, #1f2634 45%, #121623 100%);
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), transparent 60%),
+        repeating-linear-gradient(45deg, rgba(123, 97, 255, 0.08), rgba(123, 97, 255, 0.08) 6px, transparent 6px, transparent 12px),
+        linear-gradient(135deg, #121621 0%, #1b2030 45%, #0f131e 100%);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 -2px 12px rgba(0, 0, 0, 0.35);
     transform: rotateY(180deg);
     backface-visibility: hidden;
     z-index: 1;
+    display: grid;
+    place-items: center;
+    color: rgba(187, 134, 252, 0.75);
+    font-size: clamp(0.9rem, 2.8vw, 1.4rem);
+    text-shadow:
+        0 0 10px rgba(123, 97, 255, 0.45),
+        0 0 18px rgba(123, 97, 255, 0.25);
 }
 
 .piece.red {
