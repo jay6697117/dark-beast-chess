@@ -82,7 +82,7 @@ export class DarkBeastChess extends CoreEngine {
             if (result.success && result.piece) {
                 this.addMessage(`翻开了${this.getAnimalName(result.piece.type)}(${this.getColorName(result.piece.color)})，您是${this.getColorName(result.piece.color)}方！`, 'important');
             }
-        }, 1200);
+        }, 1050);
     }
 
     handleFlip(row: number, col: number) {
@@ -109,7 +109,7 @@ export class DarkBeastChess extends CoreEngine {
                     this.addMessage(`翻开了对方${this.getAnimalName(result.piece.type)}`);
                 }
             }
-        }, 1200);
+        }, 1050);
     }
 
     selectPiece(row: number, col: number) {

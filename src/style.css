@@ -1232,6 +1232,8 @@ body {
         0 10px 26px rgba(0, 0, 0, 0.25),
         0 3px 8px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .piece::before {
@@ -1527,39 +1529,39 @@ body {
 /* 翻牌动画 - 3D 效果（适配扑克牌形状） */
 @keyframes flip-reveal {
     0% {
-        transform: perspective(1100px) rotateY(0deg) scale(0.96) translateY(2px);
-        filter: brightness(0.95) saturate(1);
+        transform: perspective(1100px) rotateY(0deg) scale(0.98) translateY(1px);
+        filter: brightness(0.96) saturate(1);
         border-radius: var(--radius-md);
-        box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.32);
     }
-    25% {
-        transform: perspective(1100px) rotateY(55deg) scale(1.08) translateY(-4px);
-        filter: brightness(1.25) saturate(1.05);
+    30% {
+        transform: perspective(1100px) rotateY(60deg) scale(1.02) translateY(-2px);
+        filter: brightness(1.12) saturate(1.05);
         border-radius: var(--radius-lg);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 18px rgba(123, 97, 255, 0.28);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.34), 0 0 14px rgba(123, 97, 255, 0.2);
     }
     50% {
-        transform: perspective(1100px) rotateY(105deg) scale(1.12) translateY(-6px);
-        filter: brightness(1.45) saturate(1.12);
+        transform: perspective(1100px) rotateY(90deg) scale(1.02) translateY(-2px);
+        filter: brightness(1.2) saturate(1.08);
         border-radius: var(--radius-lg);
-        box-shadow: 0 16px 30px rgba(0,0,0,0.42), 0 0 24px rgba(123, 97, 255, 0.35);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.36), 0 0 18px rgba(123, 97, 255, 0.25);
     }
-    75% {
-        transform: perspective(1100px) rotateY(145deg) scale(1.06) translateY(-3px);
-        filter: brightness(1.25) saturate(1.05);
+    70% {
+        transform: perspective(1100px) rotateY(120deg) scale(1.01) translateY(-1px);
+        filter: brightness(1.12) saturate(1.04);
         border-radius: var(--radius-lg);
-        box-shadow: 0 10px 22px rgba(0,0,0,0.38), 0 0 18px rgba(123, 97, 255, 0.28);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.32), 0 0 14px rgba(123, 97, 255, 0.18);
     }
     100% {
         transform: perspective(1100px) rotateY(180deg) scale(1) translateY(0);
         filter: brightness(1) saturate(1);
         border-radius: var(--radius-md);
-        box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.32);
     }
 }
 
 .piece.flipping {
-    animation: flip-reveal 1.2s var(--ease-emphasized);
+    animation: flip-reveal 1.05s ease-in-out;
     animation-fill-mode: both;
     z-index: 50;
     will-change: transform, filter, box-shadow;
