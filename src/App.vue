@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useGameLogic } from './composables/useGameLogic';
 import BoardCell from './components/BoardCell.vue';
 import Lobby from './components/Lobby.vue';
@@ -89,6 +89,10 @@ const victoryMessage = computed(() => {
   if (bluePiecesCount.value === 0) return '恭喜红方获胜！';
   return '游戏结束！';
 });
+
+const showRules = ref(false);
+const openRules = () => { showRules.value = true; };
+const closeRules = () => { showRules.value = false; };
 </script>
 
 <template>
@@ -166,6 +170,14 @@ const victoryMessage = computed(() => {
           {{ isOnline ? '退出房间' : '退出单机房间' }}
         </button>
       </section>
+
+      <div class="sidebar-flex-spacer" aria-hidden="true"></div>
+
+      <button class="rules-btn" type="button" @click="openRules" aria-haspopup="dialog" aria-controls="rulesModal">
+        <span class="rules-btn-glow"></span>
+        <span class="rules-btn-label">游戏规则</span>
+        <span class="rules-btn-sub">Dark Beast Protocol</span>
+      </button>
     </aside>
 
     <main class="game-main" role="main" aria-label="游戏主区域">
@@ -246,6 +258,56 @@ const victoryMessage = computed(() => {
         <p class="victory-message">{{ victoryMessage }}</p>
         <div class="modal-actions">
           <button class="btn btn-primary" @click="initGame">再来一局</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 规则弹窗 -->
+    <div
+      v-if="showRules"
+      id="rulesModal"
+      class="rules-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="rules-title"
+      @click.self="closeRules">
+      <div class="rules-modal">
+        <header class="rules-modal-header">
+          <div class="rules-title-wrap">
+            <span class="rules-title-accent"></span>
+            <h2 id="rules-title">暗兽棋规则</h2>
+            <p class="rules-subtitle">Dark Beast Protocol</p>
+          </div>
+          <button class="rules-close" type="button" @click="closeRules" aria-label="关闭规则">×</button>
+        </header>
+
+        <div class="rules-content" role="document">
+          <section class="rule-block">
+            <h3>吃法</h3>
+            <ul>
+              <li>强吃弱：战斗力由弱到强依次为 鼠 &lt; 猫 &lt; 狗 &lt; 狼 &lt; 豹 &lt; 虎 &lt; 狮 &lt; 象，强者可吃弱者。</li>
+              <li>鼠特例：鼠能吃象，象不能吃鼠。</li>
+              <li>互吃：同级相遇可互吃（同归于尽）。</li>
+              <li>总结：鼠吃鼠/象；猫吃猫/鼠；狗吃狗/猫/鼠；狼吃狼/狗/猫/鼠；豹吃豹/狼/狗/猫/鼠；虎吃虎/豹/狼/狗/猫/鼠；狮吃狮/虎/豹/狼/狗/猫/鼠；象吃象/狮/虎/豹/狼/狗/猫。</li>
+            </ul>
+          </section>
+
+          <section class="rule-block">
+            <h3>胜负判定</h3>
+            <ul>
+              <li>一方所有兽被吃光，对方获胜。</li>
+              <li>一方中途离开游戏，视为逃跑，对方获胜。</li>
+            </ul>
+          </section>
+
+          <section class="rule-block">
+            <h3>违例处理</h3>
+            <p>暂无额外违例规则，默认遵循公平竞赛与体育精神。</p>
+          </section>
+        </div>
+
+        <div class="rules-actions">
+          <button class="btn btn-secondary" type="button" @click="closeRules">知道了</button>
         </div>
       </div>
     </div>

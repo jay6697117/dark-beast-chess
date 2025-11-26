@@ -216,6 +216,10 @@ body {
     transform: translateY(-2px);
 }
 
+.sidebar-flex-spacer {
+    flex: 1 1 auto;
+}
+
 .game-header {
     text-align: center;
     margin-bottom: clamp(var(--space-md), 2vw, var(--space-lg));
@@ -2539,4 +2543,220 @@ body {
 @keyframes slide-in {
     from { opacity: 0; transform: translateX(10px); }
     to { opacity: 1; transform: translateX(0); }
+}
+
+/* 规则按钮与弹窗 */
+.rules-btn {
+    position: relative;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(120deg, rgba(255, 71, 87, 0.15), rgba(83, 82, 237, 0.15));
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    backdrop-filter: blur(6px);
+}
+
+.rules-btn-glow {
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 71, 87, 0.35), transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(83, 82, 237, 0.35), transparent 50%);
+    filter: blur(18px);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.rules-btn-label,
+.rules-btn-sub {
+    position: relative;
+    display: block;
+    z-index: 1;
+}
+
+.rules-btn-sub {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.rules-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    mix-blend-mode: screen;
+    opacity: 0.8;
+}
+
+.rules-btn:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 71, 87, 0.35), 0 0 25px rgba(83, 82, 237, 0.35);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.rules-btn:hover .rules-btn-glow {
+    opacity: 0.9;
+}
+
+.rules-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.rules-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 7, 12, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    backdrop-filter: blur(8px) saturate(120%);
+    padding: 24px;
+}
+
+.rules-modal {
+    position: relative;
+    width: min(820px, 94vw);
+    max-height: 90vh;
+    background: linear-gradient(145deg, rgba(18, 19, 34, 0.9), rgba(10, 12, 24, 0.94));
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.6), 0 0 30px rgba(83, 82, 237, 0.25);
+    padding: 22px clamp(18px, 3vw, 28px);
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+.rules-modal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 71, 87, 0.12), transparent 38%),
+                radial-gradient(circle at 80% 0%, rgba(83, 82, 237, 0.16), transparent 35%),
+                radial-gradient(circle at 60% 80%, rgba(255, 215, 0, 0.08), transparent 45%);
+    pointer-events: none;
+}
+
+.rules-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.rules-title-wrap h2 {
+    font-size: 1.6rem;
+    margin: 0;
+    background: linear-gradient(120deg, #ff4757, #ffd700, #5352ed);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 6s ease infinite;
+}
+
+.rules-subtitle {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+}
+
+.rules-title-accent {
+    display: block;
+    width: 68px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255, 71, 87, 0.8), rgba(255, 215, 0, 0.8), rgba(83, 82, 237, 0.8));
+    box-shadow: 0 0 12px rgba(255, 71, 87, 0.4), 0 0 12px rgba(83, 82, 237, 0.35);
+    margin-bottom: 8px;
+}
+
+.rules-close {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.rules-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(83, 82, 237, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.rules-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: clamp(14px, 2.2vw, 20px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    max-height: 60vh;
+    overflow-y: auto;
+    backdrop-filter: blur(4px);
+}
+
+.rules-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rules-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255, 71, 87, 0.5), rgba(83, 82, 237, 0.5));
+    border-radius: 999px;
+}
+
+.rule-block + .rule-block {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.rule-block h3 {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+}
+
+.rule-block ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.rule-block li + li {
+    margin-top: 4px;
+}
+
+.rules-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .rules-modal {
+        padding: 18px;
+    }
+
+    .rules-btn {
+        text-align: left;
+    }
 }
