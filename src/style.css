@@ -1548,35 +1548,42 @@ body {
 /* 翻牌动画 - 3D 效果（适配扑克牌形状） */
 @keyframes flip-reveal {
     0% {
-        transform: perspective(1000px) rotateY(0deg) scale(1);
-        filter: brightness(1);
+        transform: perspective(1100px) rotateY(0deg) scale(0.96) translateY(2px);
+        filter: brightness(0.95) saturate(1);
         border-radius: var(--radius-md);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.35);
     }
     25% {
-        transform: perspective(1000px) rotateY(45deg) scale(1.05);
-        filter: brightness(1.2);
+        transform: perspective(1100px) rotateY(55deg) scale(1.08) translateY(-4px);
+        filter: brightness(1.25) saturate(1.05);
         border-radius: var(--radius-lg);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 18px rgba(123, 97, 255, 0.28);
     }
     50% {
-        transform: perspective(1000px) rotateY(90deg) scale(1.1);
-        filter: brightness(1.4);
+        transform: perspective(1100px) rotateY(105deg) scale(1.12) translateY(-6px);
+        filter: brightness(1.45) saturate(1.12);
         border-radius: var(--radius-lg);
+        box-shadow: 0 16px 30px rgba(0,0,0,0.42), 0 0 24px rgba(123, 97, 255, 0.35);
     }
     75% {
-        transform: perspective(1000px) rotateY(135deg) scale(1.05);
-        filter: brightness(1.2);
+        transform: perspective(1100px) rotateY(145deg) scale(1.06) translateY(-3px);
+        filter: brightness(1.25) saturate(1.05);
         border-radius: var(--radius-lg);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.38), 0 0 18px rgba(123, 97, 255, 0.28);
     }
     100% {
-        transform: perspective(1000px) rotateY(180deg) scale(1);
-        filter: brightness(1);
+        transform: perspective(1100px) rotateY(180deg) scale(1) translateY(0);
+        filter: brightness(1) saturate(1);
         border-radius: var(--radius-md);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.35);
     }
 }
 
 .piece.flipping {
-    animation: flip-reveal 0.8s var(--ease-emphasized);
+    animation: flip-reveal 1s var(--ease-emphasized);
+    animation-fill-mode: both;
     z-index: 50;
+    will-change: transform, filter, box-shadow;
 }
 
 /* 棋子移动动画 - 弹性轨迹（适配扑克牌） */
