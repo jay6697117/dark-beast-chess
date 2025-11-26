@@ -838,7 +838,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(var(--space-sm), 1.6vw, var(--space-lg));
+    gap: clamp(var(--space-xs), 1vw, var(--space-md));
     padding: 0;
     height: calc(100vh - 2 * var(--container-padding));
     width: 100%;
@@ -1414,14 +1414,14 @@ body {
 }
 
 /* 动物图标 - 适配扑克牌形状 */
-.piece-elephant::before { content: "🐘"; font-size: 3.2rem; }
-.piece-lion::before { content: "🦁"; font-size: 3.2rem; }
-.piece-tiger::before { content: "🐅"; font-size: 3.2rem; }
-.piece-leopard::before { content: "🐆"; font-size: 3.2rem; }
-.piece-wolf::before { content: "🐺"; font-size: 3.2rem; }
-.piece-dog::before { content: "🐕"; font-size: 3.2rem; }
-.piece-cat::before { content: "🐱"; font-size: 3.2rem; }
-.piece-mouse::before { content: "🐭"; font-size: 3.2rem; }
+.piece-elephant::before { content: "🐘"; font-size: 4.5rem; }
+.piece-lion::before { content: "🦁"; font-size: 4.5rem; }
+.piece-tiger::before { content: "🐅"; font-size: 4.5rem; }
+.piece-leopard::before { content: "🐆"; font-size: 4.5rem; }
+.piece-wolf::before { content: "🐺"; font-size: 4.5rem; }
+.piece-dog::before { content: "🐕"; font-size: 4.5rem; }
+.piece-cat::before { content: "🐱"; font-size: 4.5rem; }
+.piece-mouse::before { content: "🐭"; font-size: 4.5rem; }
 
 /* 屏幕尺寸自适应的动物图标大小 */
 @media (min-width: 1440px) {
@@ -1433,7 +1433,7 @@ body {
     .piece-dog::before,
     .piece-cat::before,
     .piece-mouse::before {
-        font-size: 3.5rem;
+        font-size: 5rem;
     }
 }
 
