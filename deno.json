@@ -4,7 +4,8 @@
     "dev": "deno run --watch --allow-net --allow-read --allow-write --allow-env --unstable-kv server/main.ts",
     "build": "npm install && npm run build",
     "serve": "deno run -A main.ts",
-    "clear:kv": "deno run --allow-net --allow-read --unstable-kv scripts/clear_kv.ts"
+    "clear-all-kv": "deno run --allow-net --allow-read --unstable-kv scripts/clear_kv.ts",
+    "query-all-kv": "deno run --allow-net --allow-read --unstable-kv scripts/query_all_kv.ts"
   },
   "imports": {
     "hono": "https://deno.land/x/hono/mod.ts",

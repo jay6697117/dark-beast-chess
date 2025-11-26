@@ -1217,10 +1217,15 @@ body {
     transition: all 0.4s var(--ease-emphasized);
     font-size: 3.5rem;
     font-weight: 600;
+    line-height: 1;
     cursor: pointer;
     z-index: 2;
     backdrop-filter: blur(4px);
     border: 3px solid transparent;
+    box-sizing: border-box;
+    margin: auto;
+    flex-shrink: 0;
+    flex-grow: 0;
     box-shadow:
         0 10px 26px rgba(0, 0, 0, 0.25),
         0 3px 8px rgba(0, 0, 0, 0.2),
