@@ -5,7 +5,8 @@
     "build": "npm install && npm run build",
     "serve": "deno run -A main.ts",
     "clear_all_kv": "deno run --allow-net --allow-read --unstable-kv scripts/clear_all_kv.ts",
-    "query_all_kv": "deno run --allow-net --allow-read --unstable-kv scripts/query_all_kv.ts"
+    "query_all_kv": "deno run --allow-net --allow-read --unstable-kv scripts/query_all_kv.ts",
+    "kview": "deno run -A --unstable-kv https://kview.deno.dev/main.ts"
   },
   "imports": {
     "hono": "https://deno.land/x/hono/mod.ts",

@@ -39,4 +39,4 @@ dist-ssr
 
 # TypeScript
 *.tsbuildinfo
-kview/*
+# kview/*
