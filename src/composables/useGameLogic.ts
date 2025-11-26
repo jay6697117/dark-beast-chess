@@ -295,7 +295,7 @@ export function useGameLogic() {
           if (!isOnline.value && !gameStarted.value && !inLocalRoom.value) {
               fetchRooms();
           }
-      }, 3000);
+      }, 2000);
   };
 
   const stopRoomPolling = () => {
