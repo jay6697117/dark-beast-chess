@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>暗兽棋 - 微信分享落地页</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #0f172a;
+      --card: rgba(255, 255, 255, 0.06);
+      --text: #e2e8f0;
+      --accent: #38bdf8;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #f43f5e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.08), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(244,63,94,0.08), transparent 30%),
+                  var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+    }
+    p { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+    .link-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      word-break: break-all;
+      margin: 12px 0;
+      font-size: 15px;
+      color: #cbd5e1;
+    }
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    button, a.button {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      color: #0b1120;
+      background: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 10px 30px rgba(56,189,248,0.25);
+    }
+    button.secondary {
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    button:active, a.button:active { transform: translateY(1px); }
+    .status { margin-top: 10px; font-size: 14px; color: var(--muted); }
+    .status.ok { color: var(--success); }
+    .status.error { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>黑兽棋 · 快捷访问</h1>
+    <p>如果按钮无法直接打开，请长按复制下方链接后用浏览器打开。</p>
+    <div class="link-box" id="linkBox">https://dark-beast-chess.jay6697117.deno.net/</div>
+    <div class="buttons">
+      <a class="button" id="openBtn" href="https://dark-beast-chess.jay6697117.deno.net/" target="_blank" rel="noreferrer">直接打开</a>
+      <button id="copyBtn">复制链接</button>
+    </div>
+    <div class="status" id="status">复制后可手动粘贴到浏览器。</div>
+  </div>
+
+  <script>
+    (function () {
+      const url = 'https://dark-beast-chess.jay6697117.deno.net/';
+      const copyBtn = document.getElementById('copyBtn');
+      const status = document.getElementById('status');
+      const linkBox = document.getElementById('linkBox');
+
+      function setStatus(text, type) {
+        status.textContent = text;
+        status.className = 'status' + (type ? ' ' + type : '');
+      }
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            setStatus('已复制链接，可粘贴到浏览器打开。', 'ok');
+            return;
+          }
+        } catch (err) {
+          // fallback below
+        }
+        // 兼容不支持 Clipboard API 的微信内核
+        const range = document.createRange();
+        range.selectNodeContents(linkBox);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        try {
+          const ok = document.execCommand('copy');
+          if (ok) {
+            setStatus('已复制链接，可粘贴到浏览器打开。', 'ok');
+          } else {
+            setStatus('复制失败，请长按链接手动复制。', 'error');
+          }
+        } catch (err) {
+          setStatus('复制失败，请长按链接手动复制。', 'error');
+        } finally {
+          selection.removeAllRanges();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
