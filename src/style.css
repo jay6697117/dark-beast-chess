@@ -1144,6 +1144,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    aspect-ratio: 1 / 1;
     z-index: 1;
     overflow: hidden;
 }
@@ -1206,8 +1207,9 @@ body {
 
 /* 棋子样式 - 扑克牌风格长方形设计 */
 .piece {
-    width: 88%;
-    height: 88%;
+    --piece-size: 88%;
+    width: var(--piece-size);
+    height: var(--piece-size);
     aspect-ratio: 1 / 1; /* 方形棋子，更贴近移动端样式 */
     border-radius: 18px;
     display: flex;
@@ -1215,7 +1217,7 @@ body {
     justify-content: center;
     position: relative;
     transition: all 0.4s var(--ease-emphasized);
-    font-size: 3.5rem;
+    font-size: clamp(2.6rem, 5vw, 3.5rem);
     font-weight: 600;
     line-height: 1;
     cursor: pointer;
@@ -1297,8 +1299,8 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 40px;
-    height: 40px;
+    width: 52%;
+    height: 52%;
     transform: translate(-50%, -50%);
     background:
         radial-gradient(ellipse 60% 30% at 30% 40%, rgba(187, 134, 252, 0.4) 0%, transparent 50%),
@@ -1312,10 +1314,10 @@ body {
 .piece.hidden::after {
     content: '🎭';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.8rem;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.56em;
     color: rgba(187, 134, 252, 0.9);
     text-shadow:
         0 0 8px rgba(187, 134, 252, 0.6),
@@ -1324,6 +1326,7 @@ body {
     animation: mystery-glow 3s ease-in-out infinite;
     z-index: 1;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    line-height: 1;
 }
 
 /* 鼠标悬停时的神秘效果 - 扑克牌风格 */
@@ -1362,22 +1365,22 @@ body {
 @keyframes mystery-glow {
     0%, 100% {
         opacity: 0.6;
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
     }
     50% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: scale(1.1);
     }
 }
 
 @keyframes mystery-glow-intense {
     0%, 100% {
         opacity: 0.8;
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
     }
     25% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1.15);
+        transform: scale(1.15);
     }
     75% {
         opacity: 1;
