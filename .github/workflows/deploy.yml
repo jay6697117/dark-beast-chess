@@ -39,6 +39,6 @@ jobs:
         with:
           project: "dark-beast-chess"
           entrypoint: "main.ts"
-          root: "/"
+          root: "./"
           
           
