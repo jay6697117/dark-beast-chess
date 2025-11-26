@@ -1237,8 +1237,12 @@ body {
 }
 
 .piece::before {
-    position: relative;
-    z-index: 1;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    backface-visibility: hidden;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
@@ -1247,9 +1251,15 @@ body {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
-    opacity: 0.7;
-    z-index: 0;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05), transparent 60%),
+        linear-gradient(135deg, #161a24 0%, #1f2634 45%, #121623 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 12px rgba(0, 0, 0, 0.35);
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    z-index: 1;
 }
 
 .piece.red {
@@ -1297,58 +1307,46 @@ body {
 
 /* 面具风格背景纹理 - 适配扑克牌形状 */
 .piece.hidden::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60%;
-    height: 60%;
-    transform: translate(-50%, -50%);
-    background:
-        radial-gradient(ellipse 60% 30% at 30% 40%, rgba(187, 134, 252, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 30% at 70% 40%, rgba(187, 134, 252, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse 80% 20% at 50% 70%, rgba(187, 134, 252, 0.3) 0%, transparent 60%);
-    border-radius: var(--radius-sm);
-    animation: mystery-rotation 8s linear infinite;
-}
-
-/* 面具符号 */
-.piece.hidden::after {
     content: '🎭';
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
-    /* 默认移动端字号 */
     font-size: 0.88em;
     color: rgba(187, 134, 252, 0.9);
     text-shadow:
         0 0 8px rgba(187, 134, 252, 0.6),
         0 0 16px rgba(187, 134, 252, 0.3),
         0 2px 4px rgba(0, 0, 0, 0.3);
-    animation: mystery-glow 3s ease-in-out infinite;
-    z-index: 1;
+    background:
+        radial-gradient(ellipse 60% 30% at 30% 40%, rgba(187, 134, 252, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 30% at 70% 40%, rgba(187, 134, 252, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 80% 20% at 50% 70%, rgba(187, 134, 252, 0.25) 0%, transparent 60%);
+    border-radius: var(--radius-sm);
+    animation: mystery-rotation 8s linear infinite, mystery-glow 3s ease-in-out infinite;
+    z-index: 3;
+    backface-visibility: hidden;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     line-height: 1;
 }
 
 /* 桌面端放大面具字号 */
 @media (min-width: 768px) {
-    .piece.hidden::after {
+    .piece.hidden::before {
         font-size: 1.2em;
     }
 }
 
 /* 桌面端放大面具字号 */
 @media (min-width: 1024px) {
-    .piece.hidden::after {
+    .piece.hidden::before {
         font-size: 1.4em;
     }
 }
 
 /* 超大屏进一步放大 */
 @media (min-width: 1440px) {
-    .piece.hidden::after {
+    .piece.hidden::before {
         font-size: 1.8em;
     }
 }
